@@ -1,0 +1,38 @@
+/** Teks UI kunci aplikasi (PRD F4), bahasa Inggris — bahasa bawaan antarmuka. */
+const kunci = {
+  judul: "App lock",
+  petunjuk: "Ask for a PIN every time the app opens and after the window has been idle.",
+  peringatan:
+    "This lock guards the app on a device someone else could pick up. The database file and your backups are still stored as plain text, so do not leave the device unlocked.",
+  statusAktif: "PIN is set",
+  statusMati: "No PIN yet",
+  labelKodePin: "PIN",
+  labelPinBaru: "New PIN",
+  labelPinLama: "Current PIN",
+  labelPinUlang: "Repeat PIN",
+  petunjukPin: "4 to 12 digits",
+  labelJeda: "Lock automatically after",
+  jedaSeketika: "Immediately",
+  jedaDetik: "{{detik}} seconds",
+  jedaSatuMenit: "1 minute",
+  jedaMenit: "{{menit}} minutes",
+  tombolPasang: "Turn on lock",
+  tombolGanti: "Change PIN",
+  tombolLepas: "Remove lock",
+  tombolKunci: "Lock now",
+  memeriksa: "Checking PIN…",
+  biometrik: "Use fingerprint",
+  biometrikGagal: "Fingerprint not recognised. Enter your PIN.",
+  pinTidakCocok: "The new PIN and its repeat do not match.",
+  pinSalahMasuk: "That PIN does not match the one on record.",
+  berhasilPasang: "App lock is on.",
+  berhasilGanti: "PIN changed.",
+  berhasilLepas: "App lock is off.",
+  layarJudul: "PromptSaver is locked",
+  layarPetunjuk: "Enter your PIN to open your collection.",
+  layarBuka: "Unlock",
+  layarTunggu: "Too many wrong attempts. Try again in {{detik}} seconds.",
+  layarKaki: "Your data stays on this device.",
+};
+
+export default kunci;
