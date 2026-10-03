@@ -1,0 +1,76 @@
+{
+  "format": "promptsaver",
+  "schemaVersion": 1,
+  "exportedAt": 1700010000000,
+  "checksum": "148ad2c0c222507e89405fd4cbb654a8e884a2209ac4fefeea262ac5e68de581",
+  "data": {
+    "folders": [
+      {
+        "id": "f-0001",
+        "nama": "Riset",
+        "dibuatPada": 1700000000000,
+        "diubahPada": 1700000000000
+      }
+    ],
+    "tags": [
+      {
+        "id": "t-0001",
+        "nama": "akademik",
+        "warna": "hijau",
+        "dibuatPada": 1700000000000
+      },
+      {
+        "id": "t-0002",
+        "nama": "ringkas",
+        "warna": "kuning",
+        "dibuatPada": 1700000000000
+      }
+    ],
+    "prompts": [
+      {
+        "id": "p-0001",
+        "judul": "Ringkas jurnal",
+        "isi": "Ringkas jurnal penelitian ini menjadi dua paragraf bahasa Indonesia.",
+        "folderId": "f-0001",
+        "tagIds": [
+          "t-0001",
+          "t-0002"
+        ],
+        "favorit": true,
+        "disemat": false,
+        "dibuatPada": 1700000000000,
+        "diubahPada": 1700000500000,
+        "dipakaiTerakhir": null,
+        "sampahPada": null
+      },
+      {
+        "id": "p-0002",
+        "judul": "",
+        "isi": "Terjemahkan teks berikut ke bahasa Indonesia dengan gaya formal.",
+        "folderId": null,
+        "tagIds": [
+          "t-0002"
+        ],
+        "favorit": false,
+        "disemat": false,
+        "dibuatPada": 1700000600000,
+        "diubahPada": 1700000600000,
+        "dipakaiTerakhir": 1700000900000,
+        "sampahPada": null
+      },
+      {
+        "id": "p-0003",
+        "judul": "Draf di sampah",
+        "isi": "Prompt yang ikut diekspor dalam kondisi Sampah.",
+        "folderId": null,
+        "tagIds": [],
+        "favorit": false,
+        "disemat": false,
+        "dibuatPada": 1700000700000,
+        "diubahPada": 1700000700000,
+        "dipakaiTerakhir": null,
+        "sampahPada": 1700000800000
+      }
+    ]
+  }
+}
