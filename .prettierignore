@@ -1,0 +1,11 @@
+node_modules
+dist
+coverage
+src-tauri/target
+src-tauri/gen
+src/assets
+pnpm-lock.yaml
+DESIGN.md
+# Dokumen terlindungi (AGENTS.md Bagian 8). Jangan diformat ulang oleh tooling.
+AGENTS.md
+PRD.md
