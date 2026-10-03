@@ -1,0 +1,12 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Hak minimum jendela utama PromptSaver. Akses data hanya lewat command Rust, tidak ada akses filesystem dari frontend.",
+  "windows": ["utama"],
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "dialog:default",
+    "clipboard-manager:allow-write-text"
+  ]
+}
