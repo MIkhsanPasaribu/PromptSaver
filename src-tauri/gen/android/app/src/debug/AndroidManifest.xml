@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Izin jaringan hanya untuk build debug (dev server Tauri). Build rilis harus nol izin
+     INTERNET sesuai AGENTS.md Bagian 7, karena aplikasi 100% offline. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>
