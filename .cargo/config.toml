@@ -1,0 +1,11 @@
+# Artefak build Rust harus tinggal di luar folder OneDrive. OneDrive bisa mengunci berkas saat
+# sinkronisasi berjalan, dan kompilasi cargo lalu gagal atau melambat parah.
+#
+# Lokasinya sengaja TIDAK di-hardcode di sini: berkas ini ikut tersalin ke mesin lain, sedangkan
+# nama user dan letak folder lokal berbeda-beda. Setiap mesin menyetel env var CARGO_TARGET_DIR
+# sekali saja ke folder lokal mana pun, misalnya lewat PowerShell:
+#
+#   setx CARGO_TARGET_DIR "$env:USERPROFILE\.cache\promptsaver-cargo-target"
+#
+# Buka terminal baru setelah itu supaya nilainya terbaca. Kalau env var tidak diset, cargo menulis
+# ke src-tauri/target dan artefaknya ikut tersinkronisasi OneDrive lagi.
