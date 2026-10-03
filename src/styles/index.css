@@ -1,0 +1,346 @@
+/* Token desain PromptSaver. Sumber kebenaran: DESIGN.md bagian front matter.
+   Nama token sengaja berbahasa Inggris karena token desain diekspor ke tooling Tailwind,
+   sesuai DESIGN.md aturan penamaan. Nama variabel dan fungsi aplikasi tetap Bahasa Indonesia. */
+
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../assets/fonts/space-grotesk-latin-600-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../assets/fonts/space-grotesk-latin-700-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/inter-latin-400-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../assets/fonts/inter-latin-500-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");
+}
+
+@theme {
+  /* Keluarga huruf (DESIGN.md bagian Tipografi) */
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-code: "JetBrains Mono", ui-monospace, "Cascadia Mono", monospace;
+
+  /* Warna mode terang (DESIGN.md bagian Warna) */
+  --color-primary: #141210;
+  --color-primary-hover: #2b2721;
+  --color-on-primary: #fffdf7;
+  --color-secondary: #4e4941;
+  --color-tertiary: #ffd23f;
+  --color-on-tertiary: #141210;
+  --color-neutral: #f4efe3;
+  --color-surface: #fffdf7;
+  --color-on-surface: #141210;
+  --color-surface-sunken: #e7dfcd;
+  --color-error: #b3261e;
+  --color-error-tint: #fbe9e7;
+  --color-on-error: #fffdf7;
+  --color-success: #1b7a46;
+  --color-on-success: #fffdf7;
+  --color-warning: #8a5300;
+  --color-on-warning: #fffdf7;
+  --color-scrim: #141210;
+  --color-bayang: #141210;
+  --color-fokus: #141210;
+  --color-chip-kuning: #ffd23f;
+  --color-chip-hijau: #a9e5bb;
+  --color-chip-cyan: #9fe0f5;
+  --color-chip-pink: #ffb6c6;
+  --color-chip-lavender: #cdbeff;
+  --color-chip-oranye: #ffc38a;
+
+  /* Radius: hanya 0, 4, dan 8 (DESIGN.md bagian Bentuk dan Garis Tepi) */
+  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  /* Skala jarak berbasis 4px (DESIGN.md bagian Tata Letak) */
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  --spacing-xxxl: 64px;
+
+  /* Skala bayangan blok tanpa blur (DESIGN.md bagian Elevasi dan Kedalaman) */
+  --shadow-elev-1: 2px 2px 0 var(--color-bayang);
+  --shadow-elev-2: 3px 3px 0 var(--color-bayang);
+  --shadow-elev-3: 4px 4px 0 var(--color-bayang);
+  --shadow-elev-4: 6px 6px 0 var(--color-bayang);
+  --shadow-elev-5: 8px 8px 0 var(--color-bayang);
+  --shadow-elev-terpilih: 4px 4px 0 var(--color-tertiary);
+  --shadow-elev-tekan: 0 0 0 var(--color-bayang);
+  --shadow-fokus: 0 0 0 3px var(--color-bayang);
+
+  /* Easing baku, hanya dua kurva (DESIGN.md bagian Motion dan Animasi) */
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Skala ukuran teks */
+  --text-label-sm: 12px;
+  --text-label-sm--line-height: 1.25;
+  --text-label-sm--font-weight: 600;
+  --text-label-sm--letter-spacing: 0.08em;
+  --text-label-md: 14px;
+  --text-label-md--line-height: 1.25;
+  --text-label-md--font-weight: 600;
+  --text-caption-md: 14px;
+  --text-caption-md--line-height: 1.4;
+  --text-caption-md--font-weight: 500;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 1.5;
+  --text-body-md: 16px;
+  --text-body-md--line-height: 1.55;
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 1.55;
+  --text-code-sm: 13px;
+  --text-code-sm--line-height: 1.5;
+  --text-code-md: 15px;
+  --text-code-md--line-height: 1.6;
+  --text-headline-sm: 20px;
+  --text-headline-sm--line-height: 1.2;
+  --text-headline-sm--font-weight: 700;
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 1.15;
+  --text-headline-md--font-weight: 700;
+  --text-headline-md--letter-spacing: -0.01em;
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 1.1;
+  --text-headline-lg--font-weight: 700;
+  --text-headline-lg--letter-spacing: -0.02em;
+  --text-headline-xl: 48px;
+  --text-headline-xl--line-height: 1.05;
+  --text-headline-xl--font-weight: 700;
+  --text-headline-xl--letter-spacing: -0.02em;
+}
+
+/* Padanan nama token shadcn/ui ke token DESIGN.md.
+   Komponen shadcn memakai nama background/foreground/muted dan sejenisnya. Nilainya menunjuk
+   variabel DESIGN.md, jadi mode gelap ikut berubah ketika variabel di .dark berganti. */
+@theme {
+  /* Nama generik dipetakan ke keluarga huruf yang dibundel, bukan Geist bawaan preset. */
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-display);
+
+  --color-background: var(--color-neutral);
+  --color-foreground: var(--color-on-surface);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-on-surface);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-on-surface);
+  --color-primary-foreground: var(--color-on-primary);
+  /* Tidak ada --color-secondary di sini. Nama itu sudah dipakai DESIGN.md sebagai tinta teks
+     pudar, dan mendefinisikannya ulang sebagai permukaan membuat 55 pemakaian `text-secondary`
+     digambar dengan warna krem pucat (kontras 1,13 banding 1 di mode terang). Komponen shadcn
+     yang butuh permukaan sekunder memakai `bg-surface-sunken` secara langsung. Test penjaga di
+     src/app/token-penjaga.test.ts menolak tabrakan nama seperti ini. */
+  --color-secondary-foreground: var(--color-on-surface);
+  --color-muted: var(--color-surface-sunken);
+  --color-muted-foreground: var(--color-secondary);
+  --color-accent: var(--color-tertiary);
+  --color-accent-foreground: var(--color-on-tertiary);
+  --color-destructive: var(--color-error);
+  --color-destructive-foreground: var(--color-on-error);
+  --color-border: var(--color-primary);
+  --color-input: var(--color-primary);
+  --color-ring: var(--color-fokus);
+  --color-sidebar: var(--color-neutral);
+  --color-sidebar-foreground: var(--color-on-surface);
+  --color-sidebar-primary: var(--color-tertiary);
+  --color-sidebar-primary-foreground: var(--color-on-tertiary);
+  --color-sidebar-accent: var(--color-surface-sunken);
+  --color-sidebar-accent-foreground: var(--color-on-surface);
+  --color-sidebar-border: var(--color-primary);
+
+  /* Semua kelas radius komponen jatuh ke skala DESIGN.md: 4px kendali, 8px panel. */
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 8px;
+  --radius-3xl: 8px;
+  --radius-4xl: 8px;
+}
+
+/* Mode gelap (DESIGN.md bagian Mode Gelap). Garis tepi memakai nilai yang sama dengan teks,
+   bayangan blok tetap gelap dan diperlakukan sebagai hiasan. */
+.dark {
+  --color-primary: #f4efe3;
+  --color-primary-hover: #fffdf7;
+  --color-on-primary: #141210;
+  --color-secondary: #a8a096;
+  --color-tertiary: #ffd23f;
+  --color-on-tertiary: #141210;
+  --color-neutral: #121110;
+  --color-surface: #1c1a17;
+  --color-on-surface: #f4efe3;
+  --color-surface-sunken: #262319;
+  --color-error: #ff8a80;
+  --color-error-tint: #3a1e1a;
+  --color-on-error: #141210;
+  --color-success: #79d8a6;
+  --color-on-success: #141210;
+  --color-warning: #ffc864;
+  --color-on-warning: #141210;
+  --color-scrim: #000000;
+  --color-bayang: #000000;
+  --color-fokus: #f4efe3;
+  --color-chip-kuning: #5c4b00;
+  --color-chip-hijau: #25523a;
+  --color-chip-cyan: #1b4a58;
+  --color-chip-pink: #5a2634;
+  --color-chip-lavender: #3a3468;
+  --color-chip-oranye: #5a3a15;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-body);
+    color: var(--color-on-surface);
+    background-color: var(--color-neutral);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--color-neutral);
+    color: var(--color-on-surface);
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-tertiary);
+    color: var(--color-on-tertiary);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-fokus);
+    outline-offset: 2px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    margin: 0;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+}
+
+/* Hormati reduce motion dari sistem operasi dan opsi "Kurangi animasi" (PRD E2, F1).
+   Keduanya satu sumber kebenaran lewat atribut data pada elemen html. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html[data-kurangi-animasi="true"] *,
+html[data-kurangi-animasi="true"] *::before,
+html[data-kurangi-animasi="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Transparansi jendela Mode Widget (PRD G2, DESIGN.md Verifikasi poin 2). Di bawah 100 persen
+   hanya lapisan terluar yang dicampur dengan transparan memakai --widget-alpha, supaya efek
+   Acrylic sistem terlihat tanpa menumpuk dua lapisan semi-transparan. Teks dan dialog tetap opaque. */
+html:not([data-widget-transparan="100"]) .permukaan-widget {
+  background-color: color-mix(
+    in srgb,
+    var(--color-surface) calc(var(--widget-alpha, 1) * 100%),
+    transparent
+  );
+}
+html:not([data-widget-transparan="100"]) .bayangan-widget {
+  background-color: transparent;
+}
+
+/* Pada 80 sampai 89 persen bayangan blok disembunyikan: tidak terbaca di atas permukaan yang
+   tembus. Garis tepi bingkai sudah 3px pada semua level transparansi (DESIGN.md poin 2). */
+html:is([data-widget-transparan="80"], [data-widget-transparan="85"]) .permukaan-widget,
+html:is([data-widget-transparan="80"], [data-widget-transparan="85"]) .bayangan-widget {
+  box-shadow: none;
+}
+
+/* Daftar panjang: baris di luar layar dilewati dari layout dan paint. Terukur pada build
+   rilis: 500 kartu butuh 234 ms layout tanpa aturan ini, 57 ms dengan; 4.001 kartu tetap
+   54 ms. `auto 170px` menyimpan tinggi terakhir kali elemen digambar supaya gulir tidak
+   melompat saat kartu sungguhan masuk layar. */
+[data-kartu-prompt],
+.baris-widget {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 170px;
+}
+.baris-widget {
+  contain-intrinsic-size: auto 46px;
+}
+
+/* Android berjalan edge-to-edge, jadi bilah sistem menutupi tepi layar. Inset dibaca dari OS
+   dan hanya menambah jarak di luar token DESIGN.md; di desktop dan browser nilainya 0. */
+.cangkang-aman {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Z-tier DESIGN.md bagian Elevasi. Tailwind v4 tidak menghasilkan nama ini. */
+.z-dialog {
+  z-index: 400;
+}
+.z-popover {
+  z-index: 600;
+}
+.z-drawer {
+  z-index: 300;
+}
