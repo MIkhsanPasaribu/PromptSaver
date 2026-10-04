@@ -13,6 +13,12 @@ import { BATAS_PANJANG, WARNA_TAG, type TagBaru } from "./prompt.types";
    fitur folder/tag, dan test. */
 const pesan = (kunci: string, opsi?: Record<string, unknown>) => () => terjemah(kunci, opsi);
 
+/** Zod mengukur `.max()` dengan `.length` milik JavaScript, yaitu unit UTF-16, sedangkan Rust
+   memakai `chars().count()` yang menghitung code point Unicode. Teks ber-emoji atau karakter di
+   luar BMP dinilai berbeda oleh keduanya (satu emoji = 2 unit di JS, 1 di Rust), jadi semua batas
+   panjang di sini dihitung dengan code point agar client dan backend tidak berbeda kesimpulan. */
+const tidakMelebihi = (maks: number) => (nilai: string) => Array.from(nilai).length <= maks;
+
 /** Aturan nama yang sama dipakai skemaPrompt (tag baru dari form prompt) dan skemaTag,
    supaya satu nama tidak lolos di satu form dan ditolak di form lain. Karakter yang
    dilarang diambil dari `tags::service::normalisasi_nama` dan `folders::service` di Rust. */
@@ -20,7 +26,7 @@ const namaTag = z
   .string()
   .trim()
   .min(1, { error: pesan("prompt.namaTagKosong") })
-  .max(BATAS_PANJANG.namaTagMaks, {
+  .refine(tidakMelebihi(BATAS_PANJANG.namaTagMaks), {
     error: pesan("prompt.namaTagMaks", { maks: BATAS_PANJANG.namaTagMaks }),
   })
   .refine((nilai) => !nilai.includes("#"), { error: pesan("prompt.namaTagTagar") })
@@ -30,7 +36,7 @@ const namaFolder = z
   .string()
   .trim()
   .min(1, { error: pesan("prompt.namaFolderKosong") })
-  .max(BATAS_PANJANG.namaFolderMaks, {
+  .refine(tidakMelebihi(BATAS_PANJANG.namaFolderMaks), {
     error: pesan("prompt.namaFolderMaks", { maks: BATAS_PANJANG.namaFolderMaks }),
   })
   .refine((nilai) => !/[\n\r]/.test(nilai), { error: pesan("prompt.namaFolderBarisBaru") });
@@ -39,7 +45,7 @@ export const skemaPrompt = z
   .object({
     judul: z
       .string()
-      .max(BATAS_PANJANG.judulMaks, {
+      .refine(tidakMelebihi(BATAS_PANJANG.judulMaks), {
         error: pesan("prompt.judulMaks", { maks: BATAS_PANJANG.judulMaks }),
       })
       .optional()
@@ -50,7 +56,7 @@ export const skemaPrompt = z
       .refine((nilai) => nilai.trim().length > 0, {
         error: pesan("prompt.isiHanyaSpasi"),
       })
-      .max(BATAS_PANJANG.isiMaks, {
+      .refine(tidakMelebihi(BATAS_PANJANG.isiMaks), {
         error: pesan("prompt.isiMaks", { maks: BATAS_PANJANG.isiMaks }),
       }),
     folderId: z.string().nullable().optional(),

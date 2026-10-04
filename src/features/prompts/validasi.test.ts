@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { skemaFolder, skemaPrompt, skemaTag } from "@/features/prompts/types/prompt-skema";
+import { BATAS_PANJANG } from "@/features/prompts/types/prompt.types";
 import { variabelDariTeks } from "@/features/prompts/services/variabel-service";
 
 /** Aturan frontend harus mencerminkan service Rust: nama_sahih di variabel/service.rs dan
@@ -53,5 +54,42 @@ describe("variabelDariTeks", () => {
       "nama-2",
       "nama.3",
     ]);
+  });
+
+  /** Dua aturan yang dulu dijaga `deteksi_variabel` di Rust. Fungsi itu dihapus karena tidak ada
+     jalur produksi yang memanggilnya, jadi aturannya dikunci di sini: nama yang sama muncul
+     berulang hanya dihitung sekali, dan kurung buka tanpa penutup bukan variabel. */
+  it("mencatat nama yang sama hanya sekali, sesuai urutan kemunculan", () => {
+    expect(
+      variabelDariTeks("Terjemahkan ke {{bahasa}} dengan gaya {{tone}}, lalu ringkas ke {{bahasa}}"),
+    ).toEqual(["bahasa", "tone"]);
+  });
+
+  it("menganggap kurung buka tanpa penutup sebagai teks biasa", () => {
+    expect(variabelDariTeks("{{bahasa tanpa penutup")).toEqual([]);
+    expect(variabelDariTeks("bahasa}}")).toEqual([]);
+  });
+});
+
+/** `chars().count()` di Rust menghitung code point, `.length` di JavaScript menghitung unit
+   UTF-16. Tanpa penyamaan satuan, prompt ber-emoji bisa ditolak client padahal backend
+   menerimanya. Test ini mengunci client memakai satuan yang sama dengan backend. */
+describe("batas panjang dihitung dengan code point", () => {
+  it("menerima isi yang pas di batas walau berisi emoji", () => {
+    const emoji = "🙂";
+    expect(emoji.length).toBeGreaterThan(1);
+    const isi = "a".repeat(BATAS_PANJANG.isiMaks - 1) + emoji;
+    expect(Array.from(isi).length).toBe(BATAS_PANJANG.isiMaks);
+    expect(skemaPrompt.safeParse({ isi }).success).toBe(true);
+  });
+
+  it("menolak isi yang melewati batas dengan satu emoji di ujung", () => {
+    const isi = "a".repeat(BATAS_PANJANG.isiMaks) + "🙂";
+    expect(skemaPrompt.safeParse({ isi }).success).toBe(false);
+  });
+
+  it("tetap menolak nama tag yang melewati batasnya", () => {
+    const nama = "🙂".repeat(BATAS_PANJANG.namaTagMaks + 1);
+    expect(skemaTag.safeParse({ nama }).success).toBe(false);
   });
 });

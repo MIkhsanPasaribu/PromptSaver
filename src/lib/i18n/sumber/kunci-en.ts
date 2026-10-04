@@ -24,6 +24,8 @@ const kunci = {
   biometrik: "Use fingerprint",
   biometrikGagal: "Fingerprint not recognised. Enter your PIN.",
   pinTidakCocok: "The new PIN and its repeat do not match.",
+  pinRentang: "The PIN must be {{min}} to {{maks}} digits.",
+  pinHanyaAngka: "The PIN may only contain digits, no letters or spaces.",
   pinSalahMasuk: "That PIN does not match the one on record.",
   berhasilPasang: "App lock is on.",
   berhasilGanti: "PIN changed.",

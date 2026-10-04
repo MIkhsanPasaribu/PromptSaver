@@ -3,3 +3,4 @@
 export { LayarKunci } from "./components/layar-kunci";
 export { KartuKunci } from "./components/kartu-kunci";
 export { DAFTAR_JEDA, type StatusKunci } from "./services/kunci-service";
+export { galatPin, PANJANG_PIN_MAKS, PANJANG_PIN_MIN, skemaPin } from "./types/kunci-skema";

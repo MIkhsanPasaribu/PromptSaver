@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LayarKunci } from "@/features/kunci/components/layar-kunci";
 import { KartuKunci } from "@/features/kunci/components/kartu-kunci";
 import type { StatusKunci } from "@/features/kunci/services/kunci-service";
+import { galatPin } from "@/features/kunci/types/kunci-skema";
 import { useKunci } from "@/app/store/kunci-store";
 
 const { panggil } = vi.hoisted(() => ({ panggil: vi.fn() }));
@@ -158,5 +159,26 @@ describe("KartuKunci", () => {
       expect(panggil).toHaveBeenCalledWith("setel_kunci", { pin: "1234", jedaDetik: 60 }),
     );
     await waitFor(() => expect(useKunci.getState().status?.aktif).toBe(true));
+  });
+});
+
+/** Aturan PIN dicabut dari komponen ke `kunci-skema.ts` supaya hanya ada satu sumber di sisi
+   client. Angka 4 dan 12 adalah PANJANG_PIN_MIN dan PANJANG_PIN_MAKS di `kunci::service` Rust.
+   Assertion sengaja tidak mencocokkan kata kunci pesan karena pesan sudah diterjemahkan. */
+describe("galatPin", () => {
+  it("membiarkan PIN kosong supaya kolom yang belum disentuh tidak ditandai salah", () => {
+    expect(galatPin("")).toBeNull();
+  });
+
+  it("menolak PIN yang lebih pendek atau lebih panjang dari rentang backend", () => {
+    expect(galatPin("123")).toContain("4");
+    expect(galatPin("1".repeat(13))).toContain("12");
+    expect(galatPin("1234")).toBeNull();
+    expect(galatPin("1".repeat(12))).toBeNull();
+  });
+
+  it("menolak karakter selain angka", () => {
+    expect(galatPin("12a4")).toBeTruthy();
+    expect(galatPin("12 4")).toBeTruthy();
   });
 });

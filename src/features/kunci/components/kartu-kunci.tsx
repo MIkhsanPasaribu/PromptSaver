@@ -7,6 +7,7 @@ import { Kartu } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label, Petunjuk } from "@/components/ui/label";
 import { DAFTAR_JEDA, type StatusKunci } from "@/features/kunci/services/kunci-service";
+import { galatPin } from "@/features/kunci/types/kunci-skema";
 import { useKunci } from "@/app/store/kunci-store";
 import { useTerjemah } from "@/lib/i18n";
 import { pesanGalat } from "@/lib/ipc";
@@ -60,8 +61,9 @@ function GalatInline({ pesan }: { pesan: string | null }) {
   );
 }
 
-/** F4 kartu kunci aplikasi. Panjang dan isi PIN divalidasi backend; di sini hanya kecocokan dua
-   kolom yang diperiksa karena itu murni interaksi tampilan, bukan aturan data. */
+/** F4 kartu kunci aplikasi. Aturan panjang dan isi PIN hidup di `kunci-skema.ts` dan ditegakkan
+   ulang oleh `kunci::service` di Rust, sedangkan kecocokan dua kolom diperiksa di sini karena itu
+   murni interaksi tampilan, bukan aturan data. */
 export function KartuKunci() {
   const { t } = useTerjemah();
   const { status, muat, pasang, ganti, aturJeda, lepas, kunciTangan } = useKunci();
@@ -79,6 +81,7 @@ export function KartuKunci() {
   const aktif = Boolean(status?.aktif);
   const jeda = status?.jedaDetik ?? 60;
   const tidakCocok = pinUlang.length > 0 && pinBaru !== pinUlang;
+  const salahPin = galatPin(pinBaru);
 
   const kosongkan = () => {
     setPinLama("");
@@ -93,7 +96,7 @@ export function KartuKunci() {
     kunciSukses: string,
   ) => {
     event.preventDefault();
-    if (sedangProses || tidakCocok) return;
+    if (sedangProses || tidakCocok || salahPin) return;
     setProses(true);
     setGalat(null);
     try {
@@ -161,12 +164,14 @@ export function KartuKunci() {
             nilai={pinUlang}
             onUbah={setPinUlang}
           />
-          <GalatInline pesan={tidakCocok ? t("kunci.pinTidakCocok") : null} />
+          <GalatInline pesan={salahPin ?? (tidakCocok ? t("kunci.pinTidakCocok") : null)} />
           <Tombol
             type="submit"
             varian="sekunder"
             ukuran="kecil"
-            disabled={sedangProses || pinBaru.length === 0 || tidakCocok}
+            disabled={
+              sedangProses || pinBaru.length === 0 || tidakCocok || Boolean(salahPin)
+            }
           >
             {t("kunci.tombolPasang")}
           </Tombol>
@@ -218,13 +223,17 @@ export function KartuKunci() {
                 nilai={pinUlang}
                 onUbah={setPinUlang}
               />
-              <GalatInline pesan={tidakCocok ? t("kunci.pinTidakCocok") : null} />
+              <GalatInline pesan={salahPin ?? (tidakCocok ? t("kunci.pinTidakCocok") : null)} />
               <Tombol
                 type="submit"
                 varian="sekunder"
                 ukuran="kecil"
                 disabled={
-                  sedangProses || pinLama.length === 0 || pinBaru.length === 0 || tidakCocok
+                  sedangProses ||
+                  pinLama.length === 0 ||
+                  pinBaru.length === 0 ||
+                  tidakCocok ||
+                  Boolean(salahPin)
                 }
               >
                 {t("kunci.tombolGanti")}

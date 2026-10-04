@@ -25,6 +25,8 @@ const kunci = {
   biometrik: "Gunakan sidik jari",
   biometrikGagal: "Sidik jari tidak dikenali. Masukkan PIN Anda.",
   pinTidakCocok: "PIN baru dan ulangan tidak sama.",
+  pinRentang: "PIN harus {{min}} sampai {{maks}} angka.",
+  pinHanyaAngka: "PIN hanya boleh berisi angka, tanpa huruf atau spasi.",
   pinSalahMasuk: "PIN itu tidak cocok dengan yang tersimpan.",
   berhasilPasang: "Kunci aplikasi aktif.",
   berhasilGanti: "PIN diganti.",
