@@ -153,3 +153,23 @@ pub fn id_baru() -> String {
 pub fn waktu_sekarang() -> i64 {
     sekarang_ms()
 }
+
+/// Jalankan `kerja` di dalam satu transaksi SQLite. Gagal di tengah berarti rollback penuh,
+/// jadi impor tidak pernah meninggalkan data setengah jadi (AGENTS.md Bagian 5).
+/// Batas transaksi hidup di lapisan akses data, bukan di service.
+pub fn dalam_transaksi<T>(
+    koneksi: &Connection,
+    kerja: impl FnOnce(&Connection) -> Hasil<T>,
+) -> Hasil<T> {
+    koneksi.execute("BEGIN IMMEDIATE", [])?;
+    match kerja(koneksi) {
+        Ok(hasil) => {
+            koneksi.execute("COMMIT", [])?;
+            Ok(hasil)
+        }
+        Err(galat) => {
+            let _ = koneksi.execute("ROLLBACK", []);
+            Err(galat)
+        }
+    }
+}

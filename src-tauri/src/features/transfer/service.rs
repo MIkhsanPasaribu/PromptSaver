@@ -250,19 +250,7 @@ fn jalankan_impor(
     strategi: StrategiKonflik,
 ) -> Hasil<RingkasanImpor> {
     format::validasi(berkas)?;
-
-    koneksi.execute("BEGIN IMMEDIATE", [])?;
-    match impor_dalam_transaksi(koneksi, berkas, strategi) {
-        Ok(ringkasan) => {
-            koneksi.execute("COMMIT", [])?;
-            Ok(ringkasan)
-        }
-        Err(galat) => {
-            // Kegagalan di tengah tidak boleh meninggalkan data setengah jadi.
-            let _ = koneksi.execute("ROLLBACK", []);
-            Err(galat)
-        }
-    }
+    repository::dalam_transaksi(koneksi, |isi| impor_dalam_transaksi(isi, berkas, strategi))
 }
 
 fn impor_dalam_transaksi(
