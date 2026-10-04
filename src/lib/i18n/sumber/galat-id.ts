@@ -79,6 +79,18 @@ const galat = {
   percobaanTerlaluSering: "Terlalu banyak percobaan gagal. Tunggu sebentar lalu coba lagi.",
   biometrikGagal: "Sidik jari tidak dikenali atau dibatalkan.",
   biometrikHanyaAndroid: "Sidik jari hanya tersedia di Android.",
+  kueriTidakValid: "Pertanyaan pencarian tidak valid untuk susunan database ini.",
+  penyimpananPenuh: "Penyimpanan perangkat tidak cukup atau gagal ditulis.",
+  versiTakAda: "Versi tidak ditemukan.",
+  promptSampahTakAda: "Prompt di Sampah tidak ditemukan.",
+  promptBukanDiSampah: "Prompt ini tidak ada di Sampah.",
+  pintasanKurangTombol:
+    "Pintasan butuh minimal satu tombol modifier dan satu tombol kunci. Contoh: Control+Alt+K.",
+  pintasanModifierTakDikenal: "\"{{bagian}}\" bukan tombol modifier yang dikenal.",
+  pintasanKunciTakDikenal: "\"{{bagian}}\" bukan tombol kunci yang dikenal.",
+  berkasJudulTerlaluPanjang: "Judul prompt {{id}} terlalu panjang.",
+  berkasBagianKosong: "{{bagian}} kosong pada entri {{id}}.",
+  berkasBagianPanjang: "{{bagian}} lebih panjang dari {{maks}} karakter.",
 };
 
 export default galat;

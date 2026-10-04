@@ -263,12 +263,14 @@ pub fn sembunyikan_widget(app: AppHandle) -> Result<(), GalatAplikasi> {
 }
 
 fn persen_valid(persen: u8) -> Result<(), GalatAplikasi> {
-    if (80..=100).contains(&persen) {
+    let min = settings::TRANSPARANSI_MIN;
+    let maks = settings::TRANSPARANSI_MAKS;
+    if (min..=maks).contains(&persen) {
         Ok(())
     } else {
-        Err(GalatAplikasi::validasi(
-            "Transparansi widget hanya boleh 80 sampai 100 persen agar teks tetap terbaca.",
-        ))
+        Err(GalatAplikasi::validasi(format!(
+            "Transparansi widget hanya boleh {min} sampai {maks} persen agar teks tetap terbaca."
+        )))
     }
 }
 

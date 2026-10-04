@@ -225,7 +225,7 @@ fn validasi_data(data: &DataPrompt) -> Hasil<(String, String)> {
     }
     if data.isi.chars().count() > PANJANG_ISI_MAKS {
         return Err(GalatAplikasi::validasi(format!(
-            "Isi prompt terlalu panjang. Maksimal {PANJANG_ISI_MAKS} karakter."
+            "Isi prompt maksimal {PANJANG_ISI_MAKS} karakter."
         )));
     }
 

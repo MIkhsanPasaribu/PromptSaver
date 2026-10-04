@@ -78,6 +78,18 @@ const galat = {
   percobaanTerlaluSering: "Too many failed attempts. Wait a moment and try again.",
   biometrikGagal: "The fingerprint was not recognised or was cancelled.",
   biometrikHanyaAndroid: "Fingerprint unlock is only available on Android.",
+  kueriTidakValid: "The search query does not fit this database layout.",
+  penyimpananPenuh: "There is not enough device storage, or writing failed.",
+  versiTakAda: "Version not found.",
+  promptSampahTakAda: "The prompt in Trash was not found.",
+  promptBukanDiSampah: "This prompt is not in Trash.",
+  pintasanKurangTombol:
+    "A shortcut needs at least one modifier key and one key. Example: Control+Alt+K.",
+  pintasanModifierTakDikenal: "\"{{bagian}}\" is not a known modifier key.",
+  pintasanKunciTakDikenal: "\"{{bagian}}\" is not a known key.",
+  berkasJudulTerlaluPanjang: "The title of prompt {{id}} is too long.",
+  berkasBagianKosong: "{{bagian}} is empty in entry {{id}}.",
+  berkasBagianPanjang: "{{bagian}} is longer than {{maks}} characters.",
 };
 
 export default galat;
