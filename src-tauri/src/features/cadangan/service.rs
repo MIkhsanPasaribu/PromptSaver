@@ -60,30 +60,18 @@ pub fn nama_cadangan(sekarang: i64) -> String {
 /// Cadangan terbaru lebih dulu. Berkas tanpa ekstensi ekspor diabaikan.
 pub fn daftar(dir_data: &Path) -> Hasil<Vec<Cadangan>> {
     let folder = folder_cadangan(dir_data)?;
-    let mut kumpul: Vec<Cadangan> = Vec::new();
-    for item in std::fs::read_dir(&folder)? {
-        let jalur = item?.path();
-        if jalur.extension().and_then(|e| e.to_str()) != Some(EKSTENSI_BERKAS) {
-            continue;
-        }
-        let Some(nama) = jalur.file_name().and_then(|n| n.to_str()) else {
-            continue;
-        };
-        let metadata = std::fs::metadata(&jalur)?;
-        let dibuat_pada = metadata
-            .modified()
-            .ok()
-            .and_then(|waktu| waktu.duration_since(std::time::UNIX_EPOCH).ok())
-            .map(|d| d.as_millis() as i64)
-            .unwrap_or_default();
-        kumpul.push(Cadangan {
-            nama: nama.to_string(),
-            dibuat_pada,
-            ukuran_byte: metadata.len(),
-        });
-    }
-    kumpul.sort_by_key(|c| std::cmp::Reverse(c.dibuat_pada));
-    Ok(kumpul)
+    Ok(
+        crate::core::paths::kumpulkan_berkas(&folder, EKSTENSI_BERKAS)?
+            .into_iter()
+            .filter_map(|(jalur, dibuat_pada, ukuran_byte)| {
+                Some(Cadangan {
+                    nama: jalur.file_name()?.to_str()?.to_string(),
+                    dibuat_pada,
+                    ukuran_byte,
+                })
+            })
+            .collect(),
+    )
 }
 
 /// Tulis satu berkas cadangan dari koleksi saat ini, lalu buang cadangan yang melebihi batas.

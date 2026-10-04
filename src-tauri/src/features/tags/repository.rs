@@ -16,18 +16,27 @@ fn baris_ke_tag(baris: &Row<'_>) -> rusqlite::Result<Tag> {
     })
 }
 
-const QUERY_DASAR: &str = "SELECT t.id,
-       t.nama,
-       t.warna,
-       t.dibuat_pada,
-       (SELECT count(*)
-          FROM prompt_tag pt
-          JOIN prompt p ON p.id = pt.prompt_id
-         WHERE pt.tag_id = t.id AND p.sampah_pada IS NULL) AS jumlah_prompt
-  FROM tag t";
+/// Hitungan prompt aktif untuk satu tag. Berkorelasi pada `t.id`, jadi pemanggilnya harus
+/// memakai alias tabel tag `t`. Alias dalam subquery sengaja tidak memakai `pt`/`p` supaya
+/// tidak menimpa alias yang sama di query pemanggil. Dipakai `query_dasar` dan query batch di
+/// dialog salin, sehingga jumlah di daftar dan di dialog tidak pernah dari dua aturan berbeda.
+const SUBQUERY_JUMLAH_PROMPT: &str = "(SELECT count(*) \
+                                      FROM prompt_tag pt_hitung \
+                                      JOIN prompt p_hitung ON p_hitung.id = pt_hitung.prompt_id \
+                                      WHERE pt_hitung.tag_id = t.id \
+                                        AND p_hitung.sampah_pada IS NULL)";
+
+/// Kerangka SELECT tag beserta jumlah promptnya. Berbentuk fungsi, bukan konstanta, karena
+/// `SUBQUERY_JUMLAH_PROMPT` baru bisa disisipkan pada saat format.
+fn query_dasar() -> String {
+    format!(
+        "SELECT t.id, t.nama, t.warna, t.dibuat_pada, {SUBQUERY_JUMLAH_PROMPT} AS jumlah_prompt \
+           FROM tag t"
+    )
+}
 
 pub fn daftar(koneksi: &Connection) -> Hasil<Vec<Tag>> {
-    let pernyataan = format!("{QUERY_DASAR} ORDER BY t.nama COLLATE NOCASE ASC");
+    let pernyataan = format!("{} ORDER BY t.nama COLLATE NOCASE ASC", query_dasar());
     let mut pernyataan_siap = koneksi.prepare(&pernyataan)?;
     let baris = pernyataan_siap.query_map([], baris_ke_tag)?;
     let mut hasil = Vec::new();
@@ -38,12 +47,12 @@ pub fn daftar(koneksi: &Connection) -> Hasil<Vec<Tag>> {
 }
 
 pub fn ambil(koneksi: &Connection, id: &str) -> Hasil<Option<Tag>> {
-    let pernyataan = format!("{QUERY_DASAR} WHERE t.id = ?1");
+    let pernyataan = format!("{} WHERE t.id = ?1", query_dasar());
     isi_opsional(koneksi, &pernyataan, params![id])
 }
 
 pub fn cari_nama(koneksi: &Connection, nama: &str) -> Hasil<Option<Tag>> {
-    let pernyataan = format!("{QUERY_DASAR} WHERE t.nama = ?1 COLLATE NOCASE");
+    let pernyataan = format!("{} WHERE t.nama = ?1 COLLATE NOCASE", query_dasar());
     isi_opsional(koneksi, &pernyataan, params![nama])
 }
 
@@ -145,10 +154,7 @@ pub fn untuk_prompt(koneksi: &Connection, prompt_ids: &[String]) -> Hasil<Vec<(S
                 t.nama,
                 t.warna,
                 t.dibuat_pada,
-                (SELECT count(*)
-                   FROM prompt_tag p2
-                   JOIN prompt p3 ON p3.id = p2.prompt_id
-                  WHERE p2.tag_id = t.id AND p3.sampah_pada IS NULL) AS jumlah_prompt
+                {SUBQUERY_JUMLAH_PROMPT} AS jumlah_prompt
            FROM prompt_tag pt
            JOIN tag t ON t.id = pt.tag_id
           WHERE pt.prompt_id IN {penanda}

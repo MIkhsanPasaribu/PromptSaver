@@ -5,33 +5,22 @@ use rusqlite::{params_from_iter, Connection, ToSql};
 
 use crate::core::error::Hasil;
 use crate::features::prompts::model::UrutanPrompt;
+use crate::features::prompts::repository::tambah_kondisi_bersama;
 use crate::features::search::model::FilterCari;
 
-/// Bangun kondisi tambahan selain pencocokan teks. Nilai didorong dalam urutan yang sama
-/// dengan tanda `?` yang ditambahkan.
+/// Bangun kondisi tambahan selain pencocokan teks. Folder, favorit, dan penyaring tag diambil
+/// dari satu sumber bersama `prompts::repository` supaya hasil pencarian dan hasil jelajah
+/// tidak pernah berbeda baris. Nilai didorong dalam urutan yang sama dengan tanda `?` yang
+/// ditambahkan.
 fn bangun_kondisi(filter: &FilterCari, nilai: &mut Vec<Box<dyn ToSql>>) -> Vec<String> {
     let mut kondisi = vec!["p.sampah_pada IS NULL".to_string()];
-
-    if let Some(folder_id) = &filter.folder_id {
-        kondisi.push("p.folder_id = ?".to_string());
-        nilai.push(Box::new(folder_id.clone()));
-    }
-    if filter.hanya_favorit {
-        kondisi.push("p.favorit = 1".to_string());
-    }
-    if !filter.tag_ids.is_empty() {
-        let gabung = filter
-            .tag_ids
-            .iter()
-            .map(|_| "SELECT pt.prompt_id FROM prompt_tag pt WHERE pt.tag_id = ?")
-            .collect::<Vec<_>>()
-            .join(" INTERSECT ");
-        kondisi.push(format!("p.id IN ({gabung})"));
-        for tag_id in &filter.tag_ids {
-            nilai.push(Box::new(tag_id.clone()));
-        }
-    }
-
+    tambah_kondisi_bersama(
+        filter.folder_id.as_ref(),
+        filter.hanya_favorit,
+        &filter.tag_ids,
+        &mut kondisi,
+        nilai,
+    );
     kondisi
 }
 

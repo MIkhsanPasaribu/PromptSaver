@@ -132,38 +132,12 @@ pub fn kosongkan_folder_ekspor(dir_data: &Path) -> Hasil<usize> {
 /// dikembalikan supaya frontend bisa meneruskannya ke command berbasis path yang sudah ada.
 pub fn daftar_berkas_ekspor(dir_data: &Path) -> Hasil<(String, Vec<String>)> {
     let folder = folder_ekspor(dir_data)?;
-    let nama = match std::fs::read_dir(&folder) {
-        Ok(bacaan) => {
-            let mut kumpul: Vec<(std::path::PathBuf, u128)> = Vec::new();
-            for item in bacaan {
-                let item = item?;
-                let jalur = item.path();
-                if jalur.extension().and_then(|e| e.to_str()) != Some(format::EKSTENSI_BERKAS) {
-                    continue;
-                }
-                let waktu = item
-                    .metadata()
-                    .and_then(|m| m.modified())
-                    .ok()
-                    .map(|t| {
-                        t.duration_since(std::time::UNIX_EPOCH)
-                            .unwrap_or_default()
-                            .as_millis()
-                    })
-                    .unwrap_or_default();
-                kumpul.push((jalur, waktu));
-            }
-            kumpul.sort_by_key(|b| std::cmp::Reverse(b.1));
-            kumpul.into_iter().map(|(jalur, _)| jalur).collect()
-        }
-        Err(sebab) if sebab.kind() == std::io::ErrorKind::NotFound => Vec::new(),
-        Err(sebab) => return Err(sebab.into()),
-    };
-
+    let kumpul = crate::core::paths::kumpulkan_berkas(&folder, format::EKSTENSI_BERKAS)?;
     Ok((
         folder.to_string_lossy().into_owned(),
-        nama.iter()
-            .map(|j| j.to_string_lossy().into_owned())
+        kumpul
+            .into_iter()
+            .map(|(jalur, _, _)| jalur.to_string_lossy().into_owned())
             .collect(),
     ))
 }

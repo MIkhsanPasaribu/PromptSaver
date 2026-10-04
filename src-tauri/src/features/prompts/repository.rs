@@ -83,6 +83,38 @@ pub fn daftar(koneksi: &Connection, filter: &DaftarFilter) -> Hasil<Vec<PromptTa
     rakit(koneksi, mentah, false)
 }
 
+/// Kondisi penyaring yang sama dipakai daftar prompt dan hasil pencarian: folder, favorit, dan
+/// aturan "prompt harus memiliki SEMUA tag yang diminta" (PRD B2, diiris dengan INTERSECT).
+/// Digabung di satu tempat supaya penjelajahan dan pencarian tidak bisa berbeda kesimpulan
+/// tentang baris mana yang lolos. Kondisi dan nilai didorong berpasangan sehingga urutan
+/// placeholder tidak mungkin meleset dari urutan nilai.
+pub fn tambah_kondisi_bersama(
+    folder_id: Option<&String>,
+    hanya_favorit: bool,
+    tag_ids: &[String],
+    kondisi: &mut Vec<String>,
+    nilai: &mut Vec<Box<dyn ToSql>>,
+) {
+    if let Some(id) = folder_id {
+        kondisi.push("p.folder_id = ?".to_string());
+        nilai.push(Box::new(id.clone()));
+    }
+    if hanya_favorit {
+        kondisi.push("p.favorit = 1".to_string());
+    }
+    if !tag_ids.is_empty() {
+        let gabung = tag_ids
+            .iter()
+            .map(|_| "SELECT pt.prompt_id FROM prompt_tag pt WHERE pt.tag_id = ?")
+            .collect::<Vec<_>>()
+            .join(" INTERSECT ");
+        kondisi.push(format!("p.id IN ({gabung})"));
+        for tag_id in tag_ids {
+            nilai.push(Box::new(tag_id.clone()));
+        }
+    }
+}
+
 fn bangun_query(filter: &DaftarFilter) -> (String, Vec<Box<dyn ToSql>>) {
     let mut kondisi: Vec<String> = Vec::new();
     let mut nilai: Vec<Box<dyn ToSql>> = Vec::new();
@@ -92,30 +124,16 @@ fn bangun_query(filter: &DaftarFilter) -> (String, Vec<Box<dyn ToSql>>) {
     } else if !filter.sertakan_sampah {
         kondisi.push("p.sampah_pada IS NULL".to_string());
     }
-
-    if let Some(folder_id) = &filter.folder_id {
-        kondisi.push("p.folder_id = ?".to_string());
-        nilai.push(Box::new(folder_id.clone()));
-    }
     if filter.tanpa_folder {
         kondisi.push("p.folder_id IS NULL".to_string());
     }
-    if filter.hanya_favorit {
-        kondisi.push("p.favorit = 1".to_string());
-    }
-    if !filter.tag_ids.is_empty() {
-        // Logika "semua tag cocok" (PRD B2): satu subquery per tag, diiris dengan INTERSECT.
-        let gabung = filter
-            .tag_ids
-            .iter()
-            .map(|_| "SELECT pt.prompt_id FROM prompt_tag pt WHERE pt.tag_id = ?")
-            .collect::<Vec<_>>()
-            .join(" INTERSECT ");
-        kondisi.push(format!("p.id IN ({gabung})"));
-        for tag_id in &filter.tag_ids {
-            nilai.push(Box::new(tag_id.clone()));
-        }
-    }
+    tambah_kondisi_bersama(
+        filter.folder_id.as_ref(),
+        filter.hanya_favorit,
+        &filter.tag_ids,
+        &mut kondisi,
+        &mut nilai,
+    );
 
     let urutan = match filter.urutan {
         UrutanPrompt::Terbaru => "p.diubah_pada DESC",
