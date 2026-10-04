@@ -16,6 +16,9 @@ dist-ssr
 *.tsbuildinfo
 *.config.js
 *.config.d.ts
+# Pengecualian: eslint.config.js ditulis tangan dan dipakai `pnpm lint` (AGENTS.md Bagian 2).
+# Tanpa baris ini, pola *.config.js di atas ikut menyembunyikannya dari version control.
+!eslint.config.js
 
 # Editor directories and files
 .vscode/*
