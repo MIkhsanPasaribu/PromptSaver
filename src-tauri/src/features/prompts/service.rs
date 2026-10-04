@@ -327,6 +327,48 @@ mod tests {
         assert!(galat.pesan.contains("tidak boleh kosong"));
     }
 
+    /// Kontrak proyeksi daftar yang diandalkan `gunakanSalin` di frontend. Baris daftar sengaja
+    /// TIDAK membawa isi penuh: `isi` kosong dan hanya `potongan` yang terisi, supaya daftar panjang
+    /// dan Mode Widget tetap ringan. Frontend memakai tanda itu untuk mengambil teks lengkap
+    /// sebelum menulis clipboard. Jika suatu hari `isi` ikut dikirim di sini, salinan dari daftar
+    /// tetap terlihat benar padahal test ini memberi sinyal bahwa kontraknya berubah.
+    #[test]
+    fn baris_daftar_hanya_membawa_potongan_bukan_isi_penuh() {
+        use crate::features::prompts::model::PANJANG_POTONGAN;
+
+        let koneksi = koneksi_uji().unwrap();
+        let panjang = "kalimat panjang untuk menguji potongan isi. ".repeat(6);
+        let dibuat = buat(&koneksi, &data(panjang.trim_end())).unwrap();
+        // Backend memangkas spasi di ujung, jadi nilai kanonisnya adalah `isi` hasil `buat`.
+        let isi_penuh = dibuat.isi.clone();
+        assert!(isi_penuh.chars().count() > PANJANG_POTONGAN);
+
+        let baris = daftar(&koneksi, &DaftarFilter::default())
+            .unwrap()
+            .into_iter()
+            .find(|p| p.id == dibuat.id)
+            .expect("prompt hasil buat ada di daftar");
+        assert_eq!(baris.isi, "", "daftar sengaja mengirim isi kosong");
+        let potongan = baris.potongan.clone().expect("daftar mengirim potongan");
+        // `buat_potongan` mengambil PANJANG_POTONGAN karakter lalu menambah satu tanda elipsis.
+        assert_eq!(potongan.chars().count(), PANJANG_POTONGAN + 1);
+        assert!(
+            isi_penuh.starts_with(potongan.trim_end_matches('…')),
+            "potongan harus awalan isi penuh, bukan teks lain"
+        );
+        assert_ne!(
+            potongan, isi_penuh,
+            "potongan harus lebih pendek dari isi penuh"
+        );
+
+        let penuh = ambil(&koneksi, &dibuat.id).unwrap();
+        assert_eq!(penuh.isi, isi_penuh, "detail membawa isi penuh");
+        assert!(
+            penuh.potongan.is_none(),
+            "detail tidak perlu mengirim potongan"
+        );
+    }
+
     #[test]
     fn riwayat_menyimpan_keadaan_sebelum_diubah() {
         let koneksi = koneksi_uji().unwrap();

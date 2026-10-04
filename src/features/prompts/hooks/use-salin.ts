@@ -1,10 +1,11 @@
 import { useCallback, useRef, useState } from "react";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 
-import { tandaiPromptDipakai } from "@/features/prompts/services/prompt-service";
+import { ambilPrompt, tandaiPromptDipakai } from "@/features/prompts/services/prompt-service";
 import { variabelDariTeks } from "@/features/prompts/services/variabel-service";
 import type { Prompt } from "@/features/prompts/types/prompt.types";
 import { terjemah } from "@/lib/i18n";
+import { pesanGalat } from "@/lib/ipc";
 import { beriTahuGalat, beriTahuTersalin } from "@/lib/notifikasi";
 
 /** Isi yang gagal ditulis ke clipboard. Layaran menawarkan teks siap blok supaya pengguna
@@ -54,13 +55,28 @@ export function gunakanSalin(): KeadaanSalin {
     return true;
   }, []);
 
+  /** Jamin isi penuh ada sebelum menyentuh clipboard. Daftar, Sampah, dan Mode Widget sengaja
+     tidak membawa isi penuh — `rakit` di `prompts/repository.rs` dipanggil dengan
+     `sertakan_isi = false`, sehingga field `isi` berupa string kosong dan hanya `potongan` yang
+     terisi. Menyalin langsung dari objek itu menulis string kosong ke clipboard (tetap "sukses",
+     tetap memunculkan notifikasi tersalin) dan membuat variabel `{{...}}` tidak pernah terdeteksi
+     karena `variabelDariTeks` membaca teks yang sama. */
   const salin = useCallback(
     async (prompt: Prompt) => {
-      if (variabelDariTeks(prompt.isi).length > 0) {
-        setMenungguVariabel(prompt);
+      let penuh = prompt;
+      if (penuh.isi === "") {
+        try {
+          penuh = await ambilPrompt(prompt.id);
+        } catch (sebab) {
+          beriTahuGalat(pesanGalat(sebab));
+          return false;
+        }
+      }
+      if (variabelDariTeks(penuh.isi).length > 0) {
+        setMenungguVariabel(penuh);
         return false;
       }
-      return salinTeks(prompt.isi, prompt.id);
+      return salinTeks(penuh.isi, penuh.id);
     },
     [salinTeks],
   );

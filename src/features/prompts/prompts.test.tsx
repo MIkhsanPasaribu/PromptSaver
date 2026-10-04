@@ -10,13 +10,14 @@ import type { Prompt } from "@/features/prompts/types/prompt.types";
 import { variabelDariTeks } from "@/features/prompts/services/variabel-service";
 import * as variabel from "@/features/prompts/services/variabel-service";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
-import { tandaiPromptDipakai } from "@/features/prompts/services/prompt-service";
+import { ambilPrompt, tandaiPromptDipakai } from "@/features/prompts/services/prompt-service";
 
 vi.mock("@tauri-apps/plugin-clipboard-manager", () => ({
   writeText: vi.fn(async () => undefined),
 }));
 vi.mock("@/features/prompts/services/prompt-service", () => ({
   tandaiPromptDipakai: vi.fn(async () => undefined),
+  ambilPrompt: vi.fn(async (id: string) => ({ ...contoh, id })),
 }));
 vi.mock("@/lib/notifikasi", () => ({
   beriTahuTersalin: vi.fn(),
@@ -137,6 +138,39 @@ describe("gunakanSalin", () => {
     expect(writeText).toHaveBeenCalledWith(contoh.isi);
     expect(result.current.menungguVariabel).toBeNull();
     await waitFor(() => expect(tandaiPromptDipakai).toHaveBeenCalledWith("p-1"));
+  });
+
+  /** Regresi: `rakit` dengan `sertakan_isi = false` mengirim `isi` kosong untuk baris daftar,
+     Sampah, dan Mode Widget. Dulu salinan dari daftar menulis string kosong ke clipboard dan
+     tetap menampilkan notifikasi "tersalin". */
+  it("mengambil isi penuh lebih dulu saat sumbernya baris daftar tanpa isi", async () => {
+    const barisDaftar: Prompt = { ...contoh, isi: "", potongan: contoh.isi.slice(0, 20) };
+    const { result } = renderHook(() => gunakanSalin());
+
+    const ok = await result.current.salin(barisDaftar);
+
+    expect(ok).toBe(true);
+    expect(ambilPrompt).toHaveBeenCalledWith("p-1");
+    expect(writeText).toHaveBeenCalledWith(contoh.isi);
+    expect(writeText).not.toHaveBeenCalledWith("");
+  });
+
+  /** Regresi kedua yang tersembunyi di balik yang pertama: `variabelDariTeks` membaca teks yang
+     sama, jadi prompt bervariabel dari daftar tidak pernah memunculkan dialog isian dan langsung
+     menyalin. Dialog juga harus menerima teks penuh, bukan potongan. */
+  it("tetap membuka dialog variabel untuk prompt bervariabel dari daftar", async () => {
+    vi.mocked(ambilPrompt).mockResolvedValueOnce({ ...template, potongan: undefined });
+    const barisDaftar: Prompt = { ...template, isi: "", potongan: "Terjemahkan teks…" };
+    const { result } = renderHook(() => gunakanSalin());
+
+    let ok = true;
+    await act(async () => {
+      ok = await result.current.salin(barisDaftar);
+    });
+
+    expect(ok).toBe(false);
+    expect(writeText).not.toHaveBeenCalled();
+    expect(result.current.menungguVariabel?.isi).toBe(template.isi);
   });
 
   it("membuka dialog variabel dan tidak menulis clipboard untuk prompt bervariabel", async () => {
