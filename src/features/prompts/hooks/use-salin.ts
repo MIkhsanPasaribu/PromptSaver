@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 
 import { ambilPrompt, tandaiPromptDipakai } from "@/features/prompts/services/prompt-service";
@@ -33,6 +33,15 @@ export function gunakanSalin(): KeadaanSalin {
   const [menungguVariabel, setMenungguVariabel] = useState<Prompt | null>(null);
   const [salinManual, setSalinManual] = useState<AntreanSalinManual | null>(null);
   const waktuBersihkan = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Timer penanda "tersalin" harus ikut mati saat layar berganti. Tanpa ini, menyalin lalu
+  // langsung berpindah layar meninggalkan setState pada hook yang sudah dilepas.
+  useEffect(
+    () => () => {
+      if (waktuBersihkan.current) clearTimeout(waktuBersihkan.current);
+    },
+    [],
+  );
 
   const salinTeks = useCallback(async (teks: string, id?: string, jumlahSekalian?: number) => {
     try {
