@@ -136,9 +136,7 @@ pub fn run() {
             // Pencarian
             features::search::command::cari_prompt,
             // Variabel template
-            features::variabel::command::deteksi_variabel_prompt,
             features::variabel::command::susun_variabel,
-            features::variabel::command::variabel_kosong_prompt,
             features::variabel::command::ambil_nilai_variabel_terakhir,
             features::variabel::command::simpan_nilai_variabel_terakhir,
             // Pengaturan

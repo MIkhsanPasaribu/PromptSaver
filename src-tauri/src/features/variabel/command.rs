@@ -11,24 +11,11 @@ use crate::features::settings::service as layanan_pengaturan;
 use crate::features::variabel::service;
 
 #[tauri::command]
-pub fn deteksi_variabel_prompt(isi: String) -> Result<Vec<String>, GalatAplikasi> {
-    Ok(service::deteksi_variabel(&isi))
-}
-
-#[tauri::command]
 pub fn susun_variabel(
     isi: String,
     nilai: HashMap<String, String>,
 ) -> Result<String, GalatAplikasi> {
     Ok(service::isi_variabel(&isi, &nilai))
-}
-
-#[tauri::command]
-pub fn variabel_kosong_prompt(
-    isi: String,
-    nilai: HashMap<String, String>,
-) -> Result<Vec<String>, GalatAplikasi> {
-    Ok(service::variabel_kosong(&isi, &nilai))
 }
 
 /// Nilai terakhir per nama variabel, dipakai sebagai saran pada pemakaian berikutnya (PRD C2).

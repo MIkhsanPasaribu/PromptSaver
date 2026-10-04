@@ -20,7 +20,3 @@ export function beriTahuBerhasil(pesan: string) {
 export function beriTahuGalat(pesan: string) {
   toast.error(pesan, { duration: 4200 });
 }
-
-export function beriTahuPeringatan(pesan: string) {
-  toast.warning(pesan, { duration: 4200 });
-}

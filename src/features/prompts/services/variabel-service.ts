@@ -1,14 +1,10 @@
 import { panggil } from "@/lib/ipc";
 
-/** Pemetaan tipis ke command variabel template Rust. */
-export const deteksiVariabelPrompt = (isi: string) =>
-  panggil<string[]>("deteksi_variabel_prompt", { isi });
-
+/** Pemetaan tipis ke command variabel template Rust. Deteksi dan pencarian variabel kosong
+   sengaja tidak dipetakan ke IPC: keduanya dihitung dari `variabelDariTeks` di bawah supaya
+   dialog bisa ter-render sebelum round-trip selesai. */
 export const susunVariabel = (isi: string, nilai: Record<string, string>) =>
   panggil<string>("susun_variabel", { isi, nilai });
-
-export const variabelKosongPrompt = (isi: string, nilai: Record<string, string>) =>
-  panggil<string[]>("variabel_kosong_prompt", { isi, nilai });
 
 export const ambilNilaiVariabelTerakhir = () =>
   panggil<Record<string, string>>("ambil_nilai_variabel_terakhir");
