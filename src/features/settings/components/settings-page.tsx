@@ -232,7 +232,7 @@ export function HalamanPengaturan() {
 
         <div className="flex flex-wrap items-center justify-between gap-sm">
           <div>
-            <Label htmlFor="kurangi-animasi">{t("pengaturan.kurangiAnimasi")}</Label>
+            <Label>{t("pengaturan.kurangiAnimasi")}</Label>
             <Petunjuk>{t("pengaturan.petunjukKurangiAnimasi")}</Petunjuk>
           </div>
           <Saklar
@@ -259,7 +259,7 @@ export function HalamanPengaturan() {
 
         <div className="flex flex-wrap items-center justify-between gap-sm">
           <div>
-            <Label htmlFor="ingat-nilai">{t("pengaturan.labelIngatNilai")}</Label>
+            <Label>{t("pengaturan.labelIngatNilai")}</Label>
             <Petunjuk>{t("pengaturan.petunjukIngatNilai")}</Petunjuk>
           </div>
           <Saklar
@@ -294,7 +294,7 @@ export function HalamanPengaturan() {
 
           <div className="flex flex-wrap items-center justify-between gap-sm">
             <div>
-              <Label htmlFor="selalu-di-atas">{t("pengaturan.sematkanDiAtas")}</Label>
+              <Label>{t("pengaturan.sematkanDiAtas")}</Label>
               <Petunjuk>{t("pengaturan.petunjukSematkan")}</Petunjuk>
             </div>
             <Saklar
@@ -306,7 +306,7 @@ export function HalamanPengaturan() {
 
           <div className="flex flex-wrap items-center justify-between gap-sm">
             <div>
-              <Label htmlFor="tutup-tray">{t("pengaturan.sembunyikanKeTray")}</Label>
+              <Label>{t("pengaturan.sembunyikanKeTray")}</Label>
               <Petunjuk>{t("pengaturan.petunjukTray")}</Petunjuk>
             </div>
             <Saklar
@@ -382,7 +382,7 @@ export function HalamanPengaturan() {
 
         <div className="flex flex-wrap items-center justify-between gap-sm">
           <div>
-            <Label htmlFor="cadangan-otomatis">{t("pengaturan.labelCadanganMingguan")}</Label>
+            <Label>{t("pengaturan.labelCadanganMingguan")}</Label>
             <Petunjuk>{t("pengaturan.petunjukCadanganMingguan")}</Petunjuk>
           </div>
           <Saklar
@@ -598,7 +598,7 @@ export function HalamanPengaturan() {
           {konfirmasi === 2 && (
             <div className="mb-md flex flex-wrap items-center justify-between gap-sm">
               <div>
-                <Label htmlFor="hapus-cadangan">{t("pengaturan.hapusBerkasCadangan")}</Label>
+                <Label>{t("pengaturan.hapusBerkasCadangan")}</Label>
                 <Petunjuk>{t("pengaturan.petunjukHapusBerkasCadangan")}</Petunjuk>
               </div>
               <Saklar
