@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { openUrl } from "@tauri-apps/plugin-opener";
 import {
   MonitorIcon,
   RefreshCwIcon,
@@ -7,12 +8,14 @@ import {
   KeyboardIcon,
   ShieldCheckIcon,
   TriangleAlertIcon,
+  HeartIcon,
 } from "lucide-react";
 
 import { ChipPilih } from "@/components/ui/badge";
 import { Tombol } from "@/components/ui/button";
 import { Kartu } from "@/components/ui/card";
 import { KepalaLayar } from "@/components/ui/page-header";
+import { tautanDukungan } from "@/lib/project-links";
 import {
   Dialog,
   DialogDeskripsi,
@@ -541,6 +544,28 @@ export function HalamanPengaturan() {
         </div>
 
         <Petunjuk>{t("pengaturan.petunjukBelumAdaCadangan")}</Petunjuk>
+      </Kartu>
+
+      <Kartu as="section" className="grid gap-md">
+        <h2 className="font-display text-headline-sm">{t("pengaturan.dukung")}</h2>
+        <Petunjuk>{t("pengaturan.petunjukDukung")}</Petunjuk>
+        <div className="flex flex-wrap gap-xs">
+          {tautanDukungan.map((tautan) => (
+            <Tombol
+              key={tautan.nama}
+              varian="sekunder"
+              ukuran="kecil"
+              onClick={() =>
+                void openUrl(tautan.url).catch(() =>
+                  beriTahuGalat(t("pengaturan.gagalBukaTautan")),
+                )
+              }
+            >
+              <HeartIcon aria-hidden />
+              {tautan.nama}
+            </Tombol>
+          ))}
+        </div>
       </Kartu>
 
       <Dialog open={konfirmasi > 0} onOpenChange={(buka) => !buka && setKonfirmasi(0)}>

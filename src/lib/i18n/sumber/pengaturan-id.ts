@@ -127,4 +127,8 @@ export default {
   privasiBelumTersedia: "Belum tersedia di versi ini",
   privasiBelumEnkripsi:
     "Enkripsi basis data saat diam (data di disk masih terbaca bila perangkat Anda disita atau disusupi).",
+  dukung: "Dukung PromptSaver",
+  petunjukDukung:
+    "Aplikasi ini gratis, bekerja penuh tanpa internet, dan tanpa iklan atau pelacakan. Kalau PromptSaver membantu pekerjaanmu, kamu bisa traktir kopi lewat tautan di bawah. Tombolnya hanya membuka peramban sistem, jadi aplikasi ini tetap tidak mengirim data apa pun.",
+  gagalBukaTautan: "Tautan tidak dapat dibuka di peramban sistem.",
 };

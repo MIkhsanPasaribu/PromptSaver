@@ -125,4 +125,8 @@ export default {
   privasiBelumTersedia: "Not available in this version",
   privasiBelumEnkripsi:
     "Database encryption at rest (data on disk is still readable if your device is seized or compromised).",
+  dukung: "Support PromptSaver",
+  petunjukDukung:
+    "This app is free, works entirely offline, and carries no ads or tracking. If PromptSaver helps your work, you can buy me a coffee using the links below. Those buttons only open your system browser, so the app still sends nothing.",
+  gagalBukaTautan: "The link could not be opened in your system browser.",
 };
