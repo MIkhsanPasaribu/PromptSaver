@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import {
   DownloadIcon,
@@ -6,6 +6,7 @@ import {
   FolderIcon,
   HardDriveIcon,
   RefreshCwIcon,
+  Share2Icon,
   TagsIcon,
   TriangleAlertIcon,
   UploadIcon,
@@ -18,12 +19,17 @@ import { Label, Petunjuk } from "@/components/ui/label";
 import { Tab, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { daftarPrompt, statistikKoleksi } from "@/features/prompts/services/prompt-service";
 import type { Prompt, Statistik } from "@/features/prompts/types/prompt.types";
-import { AMBANG_BERKAS_BESAR, gunakanTransfer } from "@/features/transfer/hooks/use-transfer";
+import {
+  AMBANG_BERKAS_BESAR,
+  BATAS_BERKAS_IMPOR,
+  gunakanTransfer,
+} from "@/features/transfer/hooks/use-transfer";
 import { deteksiPlatform } from "@/lib/platform";
 import {
   STRATEGI_IMPOR as STRATEGI,
   namaBerkasBaku,
   type CakupanEkspor,
+  type SumberImpor,
   type StrategiKonflik,
 } from "@/features/transfer/services/transfer-service";
 import { useTerjemah } from "@/lib/i18n";
@@ -99,8 +105,9 @@ export function HalamanTransfer({ berkas }: { berkas?: string }) {
   const { t } = useTerjemah();
 
   const [tab, setTab] = useState<"ekspor" | "impor">(berkas ? "impor" : "ekspor");
-  // Mobile memakai folder tukar aplikasi karena dialog Android mengembalikan URI content
-  // yang tidak dapat dibuka aplikasi (PRD D4).
+  // Mobile memakai pemilih berkas WebView untuk impor dan folder tukar untuk ekspor:
+  // pemilih berkas Android mengembalikan URI content yang tidak punya path untuk `std::fs`,
+  // dan dialog simpan tidak tersedia di sana (PRD D1, D2).
   const mobile = deteksiPlatform() === "mobile";
   const [cakupan, setCakupan] = useState<CakupanEkspor>("semua");
   const [daftar, setDaftar] = useState<Prompt[]>([]);
@@ -109,21 +116,25 @@ export function HalamanTransfer({ berkas }: { berkas?: string }) {
   const [terpilih, setTerpilih] = useState<string[]>([]);
   const [statistik, setStatistik] = useState<Statistik | null>(null);
   const [namaAwal, setNamaAwal] = useState("");
-  const [pathImpor, setPathImpor] = useState<string | null>(null);
+  const [sumberImpor, setSumberImpor] = useState<SumberImpor | null>(null);
+  /** Nama berkas yang baru saja dipilih lewat pemilih berkas WebView; path tidak tersedia di
+     jalur ini, jadi labelnya disimpan sendiri. */
+  const [namaDipilih, setNamaDipilih] = useState<string | null>(null);
   const [strategi, setStrategi] = useState<StrategiKonflik>("lewati-duplikat");
   /** Galat hook dipakai dua bagian; flag ini menentukan bagian mana yang menampilkannya. */
   const [bagianGalat, setBagianGalat] = useState<"ekspor" | "impor">("ekspor");
 
   const kotakSemua = useRef<HTMLInputElement>(null);
+  const kotakBerkas = useRef<HTMLInputElement>(null);
 
   // Berkas yang datang dari OS (PRD D2) langsung dihitung pratinjauannya dan tab Impor
   // dipilih, supaya pengguna melihat isinya sebelum memutuskan mengimpor.
   useEffect(() => {
     if (!berkas) return;
-    setPathImpor(berkas);
+    setSumberImpor({ path: berkas });
     setBagianGalat("impor");
     setTab("impor");
-    void hitungPratinjau(berkas);
+    void hitungPratinjau({ path: berkas });
   }, [berkas, hitungPratinjau]);
 
   // Nama berkas bawaan dan total koleksi diambil sekali saat halaman dibuka, sehingga
@@ -211,16 +222,39 @@ export function HalamanTransfer({ berkas }: { berkas?: string }) {
     if (sukses) beriTahuBerhasil(t("transfer.eksporSelesai"));
   };
 
-  /** Jalur mobile: berkas dipilih dari daftar isi folder tukar, bukan lewat dialog. */
+  /** Jalur mobile cadangan: berkas yang sudah ada di folder tukar atau hasil "Bagikan". */
   const padaPilihDariFolder = async (path: string) => {
     setBagianGalat("impor");
-    setPathImpor(path);
-    await hitungPratinjau(path);
+    setNamaDipilih(null);
+    setSumberImpor({ path });
+    await hitungPratinjau({ path });
   };
 
   useEffect(() => {
     if (mobile) void muatBerkasTukar();
   }, [mobile, muatBerkasTukar]);
+
+  /** Jalur utama mobile: pemilih berkas WebView memberi isi, bukan path, karena Android
+     mengembalikan URI content yang tidak bisa dibuka `std::fs`. Validasi ukuran, checksum,
+     dan versi skema tetap dikerjakan backend. */
+  const padaBerkasTerpilih = async (event: ChangeEvent<HTMLInputElement>) => {
+    const berkas = event.target.files?.[0];
+    // Nilai input dibersihkan supaya berkas yang sama bisa dipilih ulang setelah gagal.
+    event.target.value = "";
+    if (!berkas) return;
+    setBagianGalat("impor");
+
+    if (berkas.size > BATAS_BERKAS_IMPOR) {
+      // Batas keras dijaga backend; dicek di sini agar isinya tidak sempat dimuat ke memori.
+      beriTahuGalat(t("transfer.berkasMelewatiBatas", { maks: ukuranBerkas(BATAS_BERKAS_IMPOR) }));
+      return;
+    }
+
+    const teks = await berkas.text();
+    setNamaDipilih(berkas.name);
+    setSumberImpor({ teks });
+    await hitungPratinjau({ teks });
+  };
 
   const padaPilihBerkas = async () => {
     setBagianGalat("impor");
@@ -237,22 +271,25 @@ export function HalamanTransfer({ berkas }: { berkas?: string }) {
     }
     if (!path) return;
 
-    setPathImpor(path);
-    await hitungPratinjau(path);
+    setSumberImpor({ path });
+    await hitungPratinjau({ path });
   };
 
   const padaImpor = async () => {
-    if (!pathImpor) return;
+    if (!sumberImpor) return;
     setBagianGalat("impor");
-    if (await jalankanImpor(pathImpor, strategi)) {
+    if (await jalankanImpor(sumberImpor, strategi)) {
       beriTahuBerhasil(t("transfer.imporSelesai"));
-      setPathImpor(null);
+      setSumberImpor(null);
+      setNamaDipilih(null);
     }
   };
 
   const kunciCatatanStrategi = STRATEGI.find((opsi) => opsi.nilai === strategi)?.kunciCatatan ?? "";
   const kunciCatatanCakupan = CAKUPAN.find((opsi) => opsi.nilai === cakupan)?.kunciCatatan;
   const berkasBesar = Boolean(pratinjau && pratinjau.ukuranByte > AMBANG_BERKAS_BESAR);
+  /** Jalur desktop menampilkan path nyata; jalur WebView hanya punya nama berkasnya. */
+  const labelBerkasImpor = sumberImpor && "path" in sumberImpor ? sumberImpor.path : null;
 
   return (
     <section className="mx-auto grid w-full max-w-[1080px] gap-lg px-md">
@@ -428,11 +465,40 @@ export function HalamanTransfer({ berkas }: { berkas?: string }) {
             <JudulKartu>{t("transfer.berkasImpor")}</JudulKartu>
             {mobile ? (
               <div className="grid gap-sm">
-                <p className="text-body-sm text-secondary">
-                  {t("transfer.salinBerkasDepan")}{" "}
-                  <code className="font-code text-code-sm">.promptsaver</code>{" "}
-                  {t("transfer.salinBerkasBelakang")}
-                </p>
+                <div className="flex flex-wrap items-center gap-sm">
+                  <Tombol
+                    varian="sekunder"
+                    disabled={memuat}
+                    onClick={() => kotakBerkas.current?.click()}
+                  >
+                    <FileTextIcon aria-hidden />
+                    {t("transfer.pilihBerkas")}
+                  </Tombol>
+                  {namaDipilih ? (
+                    <span className="min-w-0 break-all text-body-sm text-secondary">
+                      {namaDipilih}
+                    </span>
+                  ) : null}
+                </div>
+                {/* `accept` wajib memuat satu MIME nyata, bukan hanya ekstensi:
+                    RustWebChromeClient.getValidTypes membuang ekstensi yang tidak dikenal sistem
+                    lalu membaca validTypes[0] tanpa penjaga bila type mulai dengan titik, sehingga
+                    daftar kosong melempar ArrayIndexOutOfBoundsException di luar blok try. */}
+                <input
+                  ref={kotakBerkas}
+                  type="file"
+                  accept=".promptsaver,application/octet-stream"
+                  className="hidden"
+                  aria-label={t("transfer.dialogPilih")}
+                  onChange={(event) => void padaBerkasTerpilih(event)}
+                />
+
+                <div className="flex flex-wrap items-center gap-xs rounded-sm border-2 border-primary bg-surface-sunken p-sm">
+                  <Share2Icon className="size-5 shrink-0 text-tertiary" aria-hidden />
+                  <p className="min-w-52 flex-1 text-body-sm">{t("transfer.petunjukBagikan")}</p>
+                </div>
+
+                <p className="text-body-sm text-secondary">{t("transfer.berkasTersedia")}</p>
                 <p className="break-all rounded-sm border-2 border-primary bg-surface-sunken p-xs font-code text-code-sm">
                   {berkasTukar?.folder ?? t("transfer.memuatFolder")}
                 </p>
@@ -449,7 +515,11 @@ export function HalamanTransfer({ berkas }: { berkas?: string }) {
                   {(berkasTukar?.berkas ?? []).map((path) => (
                     <Tombol
                       key={path}
-                      varian={pathImpor === path ? "utama" : "hantu"}
+                      varian={
+                        sumberImpor && "path" in sumberImpor && sumberImpor.path === path
+                          ? "utama"
+                          : "hantu"
+                      }
                       ukuran="kecil"
                       onClick={() => void padaPilihDariFolder(path)}
                     >
@@ -467,8 +537,10 @@ export function HalamanTransfer({ berkas }: { berkas?: string }) {
                   <FileTextIcon aria-hidden />
                   {t("transfer.pilihBerkas")}
                 </Tombol>
-                {pathImpor ? (
-                  <span className="min-w-0 break-all text-body-sm text-secondary">{pathImpor}</span>
+                {labelBerkasImpor ? (
+                  <span className="min-w-0 break-all text-body-sm text-secondary">
+                    {labelBerkasImpor}
+                  </span>
                 ) : (
                   <span className="text-body-sm text-secondary">
                     {t("transfer.belumAdaBerkasDipilih")}

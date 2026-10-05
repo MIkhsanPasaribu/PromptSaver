@@ -43,7 +43,8 @@ export default {
   memproses: "Memproses…",
   dialogSimpan: "Simpan file ekspor",
   eksporSelesai: "Ekspor selesai. Berkas siap dipindahkan ke perangkat lain.",
-  eksporSelesaiFolder: "Ekspor selesai. Berkas ada di folder aplikasi, siap dipindahkan.",
+  eksporSelesaiFolder:
+    "Ekspor selesai. Berkas ada di folder tukar aplikasi dan bisa diambil lewat kabel USB.",
   eksporBerhasil: "Ekspor berhasil",
   hitungPrompt: "{{n}} prompt",
   hitungFolder: "{{n}} folder",
@@ -53,8 +54,10 @@ export default {
     "Pindahkan berkas ini ke perangkat lain lewat kabel USB, Bluetooth, kartu memori, atau layanan berbagi berkas pilihan Anda.",
 
   berkasImpor: "Berkas yang akan diimpor",
-  salinBerkasDepan: "Salin berkas",
-  salinBerkasBelakang: "ke folder ini lewat pengelola berkas perangkat, lalu muat ulang daftar.",
+  petunjukBagikan:
+    "Cara lain: dari pengelola berkas, tahan berkas .promptsaver lalu pilih Bagikan ke PromptSaver. Berkasnya langsung muncul di layar ini.",
+  berkasTersedia: "Berkas yang sudah dikenal aplikasi ini, terbaru lebih dulu:",
+  berkasMelewatiBatas: "Berkas melebihi {{maks}}, jadi tidak dikirim ke aplikasi.",
   memuatFolder: "Memuat folder...",
   muatUlang: "Muat ulang",
   belumAdaBerkas: "Belum ada berkas ekspor di folder ini.",

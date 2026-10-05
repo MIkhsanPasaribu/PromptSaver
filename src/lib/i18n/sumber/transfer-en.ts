@@ -43,7 +43,8 @@ export default {
   memproses: "Working…",
   dialogSimpan: "Save export file",
   eksporSelesai: "Export finished. The file is ready to move to another device.",
-  eksporSelesaiFolder: "Export finished. The file is in the app folder, ready to move.",
+  eksporSelesaiFolder:
+    "Export finished. The file is in the app's swap folder, reachable over a USB cable.",
   eksporBerhasil: "Export succeeded",
   hitungPrompt: "{{n}} prompts",
   hitungFolder: "{{n}} folders",
@@ -53,9 +54,10 @@ export default {
     "Move this file to another device over USB, Bluetooth, a memory card, or any file sharing service you prefer.",
 
   berkasImpor: "File to be imported",
-  salinBerkasDepan: "Copy the",
-  salinBerkasBelakang:
-    "file into this folder with your device's file manager, then reload the list.",
+  petunjukBagikan:
+    "Another way: in your file manager, hold the .promptsaver file and choose Share to PromptSaver. The file appears on this screen right away.",
+  berkasTersedia: "Files this app already knows, newest first:",
+  berkasMelewatiBatas: "The file is larger than {{maks}}, so it was not sent to the app.",
   memuatFolder: "Loading folder...",
   muatUlang: "Reload",
   belumAdaBerkas: "No export files in this folder yet.",

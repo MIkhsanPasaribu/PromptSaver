@@ -5,12 +5,15 @@ import {
   eksporKeFolder as eksporKeFolderService,
   daftarBerkasEkspor,
   imporKoleksi,
+  imporKoleksiTeks,
   pratinjauImpor,
+  pratinjauImporTeks,
   type CakupanEkspor,
   type DaftarBerkasEkspor,
   type PratinjauImpor,
   type RingkasanEkspor,
   type RingkasanImpor,
+  type SumberImpor,
   type StrategiKonflik,
 } from "@/features/transfer/services/transfer-service";
 import { pesanGalat } from "@/lib/ipc";
@@ -36,8 +39,8 @@ export type KeadaanTransfer = {
   eksporKeFolder: (cakupan: CakupanEkspor, ids: string[]) => Promise<boolean>;
   berkasTukar: DaftarBerkasEkspor | null;
   muatBerkasTukar: () => Promise<void>;
-  hitungPratinjau: (path: string) => Promise<boolean>;
-  jalankanImpor: (path: string, strategi: StrategiKonflik) => Promise<boolean>;
+  hitungPratinjau: (sumber: SumberImpor) => Promise<boolean>;
+  jalankanImpor: (sumber: SumberImpor, strategi: StrategiKonflik) => Promise<boolean>;
 };
 
 /**
@@ -46,6 +49,10 @@ export type KeadaanTransfer = {
  * tetap dijaga backend lewat `UKURAN_BERKAS_MAKS`.
  */
 export const AMBANG_BERKAS_BESAR = 20 * 1024 * 1024;
+
+/** Batas keras backend (`transfer::format::UKURAN_BERKAS_MAKS`) dicermin di sini supaya berkas
+   yang jelas-jelas terlalu besar berhenti sebelum isinya dibaca ke memori WebView. */
+export const BATAS_BERKAS_IMPOR = 50 * 1024 * 1024;
 
 export function gunakanTransfer(): KeadaanTransfer {
   const [ringkasanEkspor, setRingkasanEkspor] = useState<RingkasanEkspor | null>(null);
@@ -117,10 +124,15 @@ export function gunakanTransfer(): KeadaanTransfer {
     }
   }, []);
 
+  /** Sumber dapat berupa path nyata (desktop, berkas hasil "Bagikan") atau isi berkas yang
+     dibacakan pemilih berkas WebView. Dua bentuk itu diterjemahkan ke dua command berbeda. */
   const hitungPratinjau = useCallback(
-    (path: string) =>
+    (sumber: SumberImpor) =>
       jalankan(
-        () => pratinjauImpor(path),
+        () =>
+          "path" in sumber
+            ? pratinjauImpor(sumber.path)
+            : pratinjauImporTeks(sumber.teks),
         (data) => {
           // Berkas baru membatalkan hasil impor sebelumnya.
           setHasil(null);
@@ -131,9 +143,12 @@ export function gunakanTransfer(): KeadaanTransfer {
   );
 
   const jalankanImpor = useCallback(
-    (path: string, strategi: StrategiKonflik) =>
+    (sumber: SumberImpor, strategi: StrategiKonflik) =>
       jalankan(
-        () => imporKoleksi(path, strategi),
+        () =>
+          "path" in sumber
+            ? imporKoleksi(sumber.path, strategi)
+            : imporKoleksiTeks(sumber.teks, strategi),
         (data) => {
           setHasil(data);
           // Pratinjau dibuang supaya berkas yang sama tidak diimpor dua kali; pengguna

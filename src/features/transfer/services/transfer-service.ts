@@ -81,4 +81,14 @@ export const pratinjauImpor = (path: string) =>
 export const imporKoleksi = (path: string, strategi: StrategiKonflik) =>
   panggil<RingkasanImpor>("impor_koleksi", { path, strategi });
 
+/** Sumber berkas impor. Desktop dan berkas hasil "Bagikan" memberi path yang bisa dibaca Rust;
+   pemilih berkas WebView Android hanya memberi isinya, jadi ada jalur `*_teks` di backend. */
+export type SumberImpor = { path: string } | { teks: string };
+
+export const pratinjauImporTeks = (teks: string) =>
+  panggil<PratinjauImpor>("pratinjau_impor_teks", { teks });
+
+export const imporKoleksiTeks = (teks: string, strategi: StrategiKonflik) =>
+  panggil<RingkasanImpor>("impor_koleksi_teks", { teks, strategi });
+
 export const namaBerkasBaku = () => panggil<string>("nama_berkas_baku");
