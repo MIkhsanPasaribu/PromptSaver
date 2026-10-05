@@ -1,8 +1,8 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { HasilSorotan } from "@/features/search/components/hasil-sorotan";
-import { KolomCari } from "@/features/search/components/kolom-cari";
+import { HasilSorotan } from "@/features/search/components/highlight-result";
+import { KolomCari } from "@/features/search/components/search-input";
 import { cariPrompt, potongSorotan } from "@/features/search/services/search-service";
 import { useNavigasi } from "@/app/store/navigasi-store";
 import type * as LayananCari from "./services/search-service";

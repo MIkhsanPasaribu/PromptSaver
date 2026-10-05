@@ -3,7 +3,7 @@ import { type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 /** Chip tag dan lencana status. Enam hue ini adalah satu-satunya warna isi yang diizinkan. */
-import { lencanaVariants } from "./lencana-varian";
+import { lencanaVariants } from "./badge-variants";
 
 export type PropertiLencana = React.ComponentProps<"span"> & VariantProps<typeof lencanaVariants>;
 

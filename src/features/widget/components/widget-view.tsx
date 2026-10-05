@@ -9,7 +9,7 @@ import { useNavigasi } from "@/app/store/navigasi-store";
 import { gunakanUrutanDaftar } from "@/app/hooks/use-urutan-daftar";
 import { deteksiModeJendela } from "@/app/store/pengaturan-store";
 import { cariPrompt } from "@/features/search/services/search-service";
-import { FormTambahCepat } from "@/features/widget/components/form-tambah-cepat";
+import { FormTambahCepat } from "@/features/widget/components/quick-add-form";
 import { DialogSalin, gunakanSalin } from "@/features/prompts";
 import { daftarPrompt } from "@/features/prompts/services/prompt-service";
 import type { Prompt } from "@/features/prompts/types/prompt.types";

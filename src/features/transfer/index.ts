@@ -1,5 +1,5 @@
 /** API publik fitur ekspor dan impor. */
-export { HalamanTransfer } from "./components/halaman-transfer";
+export { HalamanTransfer } from "./components/transfer-page";
 export { gunakanTransfer, AMBANG_BERKAS_BESAR } from "./hooks/use-transfer";
 export {
   eksporKoleksi,

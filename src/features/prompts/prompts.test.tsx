@@ -2,8 +2,8 @@ import { act, fireEvent, render, renderHook, screen, waitFor } from "@testing-li
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { KartuPrompt } from "@/features/prompts/components/prompt-card";
-import { DialogVariabel } from "@/features/prompts/components/dialog-variabel";
-import { PanelSalinManual } from "@/features/prompts/components/panel-salin-manual";
+import { DialogVariabel } from "@/features/prompts/components/variable-dialog";
+import { PanelSalinManual } from "@/features/prompts/components/manual-copy-panel";
 import { gunakanSalin } from "@/features/prompts/hooks/use-salin";
 import { skemaPrompt } from "@/features/prompts/types/prompt-skema";
 import type { Prompt } from "@/features/prompts/types/prompt.types";

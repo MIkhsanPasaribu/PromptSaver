@@ -1,10 +1,10 @@
 /** API publik fitur prompt. Fitur lain mengimpor dari sini, bukan dari file internal. */
-export { HalamanKoleksi } from "./components/halaman-koleksi";
-export { HalamanDetail } from "./components/halaman-detail";
+export { HalamanKoleksi } from "./components/collection-page";
+export { HalamanDetail } from "./components/detail-page";
 export { FormPrompt } from "./components/prompt-form";
 export { KartuPrompt } from "./components/prompt-card";
-export { DialogSalin } from "./components/dialog-salin";
-export { DialogVariabel } from "./components/dialog-variabel";
+export { DialogSalin } from "./components/copy-dialog";
+export { DialogVariabel } from "./components/variable-dialog";
 export { gunakanDaftarPrompt } from "./hooks/use-prompts";
 export { gunakanSalin, type KeadaanSalin } from "./hooks/use-salin";
 export type {

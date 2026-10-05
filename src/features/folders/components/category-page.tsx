@@ -5,7 +5,7 @@ import { Kartu } from "@/components/ui/card";
 import { Petunjuk } from "@/components/ui/label";
 import { gunakanStatistik } from "@/features/settings";
 import { terjemah, useTerjemah } from "@/lib/i18n";
-import { DaftarFolder } from "./daftar-folder";
+import { DaftarFolder } from "./folder-list";
 import { DaftarTag } from "@/features/tags";
 
 const ANGKA = new Intl.NumberFormat("id-ID");

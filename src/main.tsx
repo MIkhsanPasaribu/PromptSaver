@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import KerangkaAplikasi from "@/app/KerangkaAplikasi";
+import KerangkaAplikasi from "@/app/app-shell";
 import { PengaturNotifikasi } from "@/components/ui/sonner";
 import "@/lib/i18n";
 

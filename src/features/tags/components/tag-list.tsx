@@ -4,7 +4,7 @@ import { CheckIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 
 import { useNavigasi } from "@/app/store/navigasi-store";
 
-import { lencanaVariants } from "@/components/ui/lencana-varian";
+import { lencanaVariants } from "@/components/ui/badge-variants";
 import { Tombol } from "@/components/ui/button";
 import { DialogKonfirmasi } from "@/components/ui/dialog";
 import { FormNama } from "@/components/ui/inline-name-form";

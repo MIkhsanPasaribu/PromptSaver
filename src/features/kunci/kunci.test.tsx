@@ -1,8 +1,8 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { LayarKunci } from "@/features/kunci/components/layar-kunci";
-import { KartuKunci } from "@/features/kunci/components/kartu-kunci";
+import { LayarKunci } from "@/features/kunci/components/lock-screen";
+import { KartuKunci } from "@/features/kunci/components/lock-card";
 import type { StatusKunci } from "@/features/kunci/services/kunci-service";
 import { galatPin } from "@/features/kunci/types/kunci-skema";
 import { useKunci } from "@/app/store/kunci-store";

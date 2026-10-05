@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { HalamanSampah } from "@/features/trash/components/halaman-sampah";
+import { HalamanSampah } from "@/features/trash/components/trash-page";
 import {
   hapusPermanenPrompt,
   kosongkanSampah,

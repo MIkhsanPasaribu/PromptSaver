@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { TampilanWidget } from "@/features/widget/components/tampilan-widget";
+import { TampilanWidget } from "@/features/widget/components/widget-view";
 import { buatPrompt, daftarPrompt } from "@/features/prompts/services/prompt-service";
 import type { Prompt } from "@/features/prompts/types/prompt.types";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";

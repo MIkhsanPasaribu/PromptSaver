@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DaftarFolder } from "@/features/folders/components/daftar-folder";
+import { DaftarFolder } from "@/features/folders/components/folder-list";
 import { hapusFolder } from "@/features/folders/services/folder-service";
 import { useNavigasi } from "@/app/store/navigasi-store";
 

@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { Tombol } from "@/components/ui/button";
 import { KeadaanKosong } from "@/features/onboarding";
-import { DialogSalin } from "@/features/prompts/components/dialog-salin";
+import { DialogSalin } from "@/features/prompts/components/copy-dialog";
 import { KartuPrompt } from "@/features/prompts/components/prompt-card";
 import { gunakanDaftarPrompt, JUMLAH_PER_HALAMAN } from "@/features/prompts/hooks/use-prompts";
 import { gunakanSalin } from "@/features/prompts/hooks/use-salin";

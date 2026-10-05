@@ -19,8 +19,8 @@ import { DialogKonfirmasi } from "@/components/ui/dialog";
 import { MenuTombol } from "@/components/ui/menu";
 import { gunakanFolders } from "@/features/folders";
 import { gunakanSalin } from "@/features/prompts/hooks/use-salin";
-import { DaftarVersiPrompt } from "@/features/prompts/components/daftar-versi";
-import { DialogSalin } from "@/features/prompts/components/dialog-salin";
+import { DaftarVersiPrompt } from "@/features/prompts/components/version-list";
+import { DialogSalin } from "@/features/prompts/components/copy-dialog";
 import {
   ambilPrompt,
   duplikatPrompt,

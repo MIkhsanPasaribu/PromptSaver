@@ -1,7 +1,7 @@
 /** API publik fitur pengaturan. */
-export { HalamanPengaturan } from "./components/halaman-pengaturan";
-export { HalamanPrivasi } from "./components/halaman-privasi";
-export { DaftarPintasan } from "./components/daftar-pintasan";
+export { HalamanPengaturan } from "./components/settings-page";
+export { HalamanPrivasi } from "./components/privacy-page";
+export { DaftarPintasan } from "./components/shortcut-list";
 export { gunakanStatistik } from "./hooks/use-statistik";
 export {
   ambilPengaturan,

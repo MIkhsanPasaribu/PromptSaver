@@ -1,6 +1,6 @@
 /** API publik fitur folder. */
-export { DaftarFolder } from "./components/daftar-folder";
-export { HalamanKategori } from "./components/halaman-kategori";
+export { DaftarFolder } from "./components/folder-list";
+export { HalamanKategori } from "./components/category-page";
 export { gunakanFolders } from "./hooks/use-folders";
 export {
   daftarFolder,

@@ -1,5 +1,5 @@
 /** API publik fitur Sampah. */
-export { HalamanSampah } from "./components/halaman-sampah";
+export { HalamanSampah } from "./components/trash-page";
 export {
   daftarSampah,
   hapusKeSampah,

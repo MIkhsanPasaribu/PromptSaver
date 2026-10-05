@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DaftarVersiPrompt } from "@/features/prompts/components/daftar-versi";
+import { DaftarVersiPrompt } from "@/features/prompts/components/version-list";
 import {
   daftarRiwayatPrompt,
   pulihkanVersiPrompt,

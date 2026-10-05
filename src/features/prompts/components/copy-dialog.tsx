@@ -1,5 +1,5 @@
-import { DialogVariabel } from "@/features/prompts/components/dialog-variabel";
-import { PanelSalinManual } from "@/features/prompts/components/panel-salin-manual";
+import { DialogVariabel } from "@/features/prompts/components/variable-dialog";
+import { PanelSalinManual } from "@/features/prompts/components/manual-copy-panel";
 import type { KeadaanSalin } from "@/features/prompts/hooks/use-salin";
 import { usePengaturan } from "@/app/store/pengaturan-store";
 
