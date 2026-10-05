@@ -114,7 +114,7 @@ export function HalamanSampah() {
             </p>
           </Kartu>
         ) : (
-          <ul className="grid gap-md">
+          <ul className="grid grid-cols-1 gap-md">
             {daftar.map((prompt) => (
               <li key={prompt.id}>
                 <Kartu className="grid gap-xs">

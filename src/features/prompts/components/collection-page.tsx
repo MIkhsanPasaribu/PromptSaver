@@ -108,7 +108,7 @@ export function HalamanKoleksi() {
             onAksi={() => (adaKueri ? navigasi.resetFilter() : navigasi.ke({ nama: "form" }))}
           />
         ) : (
-          <div className="grid gap-md">
+          <div className="grid grid-cols-1 gap-md">
             <AnimatePresence initial={false}>
               {daftar.map((prompt, indeks) => (
                 <motion.div

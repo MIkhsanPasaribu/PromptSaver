@@ -53,7 +53,7 @@ export function KartuPrompt({
         prompt.disemat && "border-[3px] shadow-elev-terpilih",
       )}
     >
-      <h3 className="mb-xs pr-12 font-display text-headline-sm leading-tight">
+      <h3 className="mb-xs break-words pr-12 font-display text-headline-sm leading-tight">
         <button
           type="button"
           onClick={onBuka}
@@ -63,7 +63,7 @@ export function KartuPrompt({
         </button>
       </h3>
 
-      <p className="mb-sm line-clamp-3 text-body-md text-on-surface">
+      <p className="mb-sm line-clamp-3 break-words text-body-md text-on-surface">
         {kueriAktif ? <HasilSorotan teks={isi} kueri={kueriAktif} /> : isi}
       </p>
 
