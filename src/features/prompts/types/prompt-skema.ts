@@ -69,10 +69,6 @@ export const skemaPrompt = z
         }),
       )
       .default([]),
-  })
-  .refine((nilai) => nilai.isi.trim().length > 0, {
-    path: ["isi"],
-    error: pesan("prompt.isiWajib"),
   });
 
 export type FormPrompt = {

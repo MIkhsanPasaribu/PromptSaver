@@ -87,7 +87,6 @@ const prompt = {
   isiWajibSatuKata: "Isi prompt tidak boleh kosong. Tulis minimal satu kata.",
   isiHanyaSpasi: "Isi prompt tidak boleh hanya berisi spasi.",
   isiMaks: "Isi prompt maksimal {{maks}} karakter.",
-  isiWajib: "Isi prompt tidak boleh kosong.",
   namaTagKosong: "Nama tag tidak boleh kosong.",
   namaTagMaks: "Nama tag maksimal {{maks}} karakter.",
   namaTagTagar: "Nama tag tidak boleh mengandung #.",

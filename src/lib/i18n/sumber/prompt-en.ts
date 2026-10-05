@@ -83,7 +83,6 @@ const prompt = {
   isiWajibSatuKata: "Prompt content cannot be empty. Write at least one word.",
   isiHanyaSpasi: "Prompt content cannot be only spaces.",
   isiMaks: "Prompt content is at most {{maks}} characters.",
-  isiWajib: "Prompt content cannot be empty.",
   namaTagKosong: "Tag name cannot be empty.",
   namaTagMaks: "Tag name is at most {{maks}} characters.",
   namaTagTagar: "Tag name cannot contain #.",
