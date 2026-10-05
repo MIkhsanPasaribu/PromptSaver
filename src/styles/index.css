@@ -346,8 +346,39 @@ html:is([data-widget-transparan="80"], [data-widget-transparan="85"]) .bayangan-
   padding-right: env(safe-area-inset-right);
 }
 
-/* Z-tier DESIGN.md bagian Elevasi. Tailwind v4 tidak menghasilkan nama ini. */
-.z-dialog {
+/* Scrollbar kustom, gaya neo-brutalism: warna datar, garis tebal, tanpa blur.
+   Dibatasi ke penunjuk presisi saja. WebView Android memakai overlay scrollbar bawaan yang
+   tidak memakan tata letak; menyetel lebarnya di sana justru menggeser konten dan menghapus
+   perilaku overlay itu. Semua warna diambil dari token, jadi mode gelap ikut berganti
+   tanpa aturan terpisah. */
+@media (hover: hover) and (pointer: fine) {
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface-sunken);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-tertiary);
+    background-clip: padding-box;
+    border: 3px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    min-height: 32px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: var(--color-surface-sunken);
+  }
+}
+
+/* Z-tier DESIGN.md bagian Elevasi. Tailwind v4 tidak menghasilkan nama ini. */.z-dialog {
   z-index: 400;
 }
 .z-popover {
