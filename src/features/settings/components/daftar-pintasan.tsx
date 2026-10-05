@@ -1,9 +1,9 @@
 import { KeyboardIcon } from "lucide-react";
 
 import { Kartu } from "@/components/ui/card";
-import { Tombol } from "@/components/ui/button";
+import { KepalaLayar } from "@/components/ui/page-header";
 import { useNavigasi } from "@/app/store/navigasi-store";
-import { deteksiPlatform } from "@/features/widget/services/widget-service";
+import { deteksiPlatform } from "@/lib/platform";
 import { useTerjemah } from "@/lib/i18n";
 
 /** Notasi tombol dibiarkan apa adanya (istilah lintas bahasa); judul dan keterangan dibaca lewat
@@ -40,15 +40,11 @@ export function DaftarPintasan() {
 
   return (
     <div className="grid gap-md">
-      <div className="flex items-center justify-between gap-sm">
-        <h1 className="flex items-center gap-xs font-display text-headline-lg">
-          <KeyboardIcon aria-hidden />
-          {t("pengaturan.judulPintasan")}
-        </h1>
-        <Tombol varian="hantu" ukuran="kecil" onClick={() => navigasi.kembali()}>
-          {t("umum.kembali")}
-        </Tombol>
-      </div>
+      <KepalaLayar
+        judul={t("pengaturan.judulPintasan")}
+        ikon={<KeyboardIcon aria-hidden />}
+        padaKembali={() => navigasi.kembali()}
+      />
 
       <Kartu as="section">
         <ul className="grid gap-sm">

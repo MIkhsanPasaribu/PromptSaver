@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { RotateCcwIcon, Trash2Icon, EraserIcon, ArrowLeftIcon } from "lucide-react";
+import { RotateCcwIcon, Trash2Icon, EraserIcon } from "lucide-react";
 
 import { Tombol } from "@/components/ui/button";
 import { Kartu } from "@/components/ui/card";
 import { DialogKonfirmasi } from "@/components/ui/dialog";
-import { DialogSalin } from "@/features/prompts/components/dialog-salin";
-import { gunakanSalin } from "@/features/prompts/hooks/use-salin";
+import { KepalaLayar } from "@/components/ui/page-header";
+import { DialogSalin, gunakanSalin } from "@/features/prompts";
 import type { Prompt } from "@/features/prompts/types/prompt.types";
 import {
   daftarSampah,
@@ -78,14 +78,11 @@ export function HalamanSampah() {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-md">
-      <div className="flex flex-wrap items-center justify-between gap-sm">
-        <h1 className="font-display text-headline-lg">{t("navigasi.sampah")}</h1>
-        <div className="flex items-center gap-xs">
-          <Tombol varian="hantu" ukuran="kecil" onClick={() => navigasi.kembali()}>
-            <ArrowLeftIcon aria-hidden />
-            {t("umum.kembali")}
-          </Tombol>
-          {daftar.length > 0 && (
+      <KepalaLayar
+        judul={t("navigasi.sampah")}
+        padaKembali={() => navigasi.kembali()}
+        aksi={
+          daftar.length > 0 && (
             <Tombol
               varian="bahaya"
               ukuran="kecil"
@@ -94,9 +91,9 @@ export function HalamanSampah() {
               <EraserIcon aria-hidden />
               {t("pengorganisir.kosongkanSampah")}
             </Tombol>
-          )}
-        </div>
-      </div>
+          )
+        }
+      />
 
       <p className="text-body-sm text-secondary">{t("pengorganisir.bahayaSampah")}</p>
 

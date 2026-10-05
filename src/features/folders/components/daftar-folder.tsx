@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import {
   FolderIcon,
@@ -21,8 +21,8 @@ import {
   DialogKonten,
   DialogKonfirmasi,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label, Petunjuk } from "@/components/ui/label";
+import { FormNama } from "@/components/ui/inline-name-form";
+import { Petunjuk } from "@/components/ui/label";
 import { BATAS_PANJANG } from "@/features/prompts/types/prompt.types";
 import { skemaFolder } from "@/features/prompts/types/prompt-skema";
 import { terjemah, useTerjemah } from "@/lib/i18n";
@@ -100,68 +100,6 @@ function BarisFilter({
         </span>
       )}
     </button>
-  );
-}
-
-/** Form inline untuk membuat atau mengubah nama folder. Skema Zod yang sama dipakai form prompt;
-   backend tetap memvalidasi ulang sebagai sumber kebenaran. */
-function FormNama({
-  idKolom,
-  label,
-  nilai,
-  menyimpan,
-  pesan,
-  onNilai,
-  onSimpan,
-  onBatal,
-}: {
-  idKolom: string;
-  label: string;
-  nilai: string;
-  menyimpan: boolean;
-  pesan: string | null;
-  onNilai: (nilai: string) => void;
-  onSimpan: () => void;
-  onBatal: () => void;
-}) {
-  const { t } = useTerjemah();
-  const kolom = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    kolom.current?.focus();
-    kolom.current?.select();
-  }, []);
-
-  return (
-    <form
-      className="flex animate-in flex-col gap-xs fade-in-0 slide-in-from-top-1 duration-[180ms] ease-standard"
-      onSubmit={(event) => {
-        event.preventDefault();
-        onSimpan();
-      }}
-    >
-      <Label htmlFor={idKolom}>{label}</Label>
-      <Input
-        id={idKolom}
-        ref={kolom}
-        value={nilai}
-        maxLength={BATAS_PANJANG.namaFolderMaks}
-        aria-invalid={pesan ? true : undefined}
-        onChange={(event) => onNilai(event.target.value)}
-        onKeyDown={(event) => {
-          if (event.key === "Escape") onBatal();
-        }}
-      />
-      {pesan && <Petunjuk galat>{pesan}</Petunjuk>}
-      <div className="flex items-center gap-xs">
-        <Tombol type="submit" varian="utama" disabled={menyimpan}>
-          {menyimpan ? t("umum.menyimpan") : t("umum.simpan")}
-        </Tombol>
-        <Tombol type="button" varian="sekunder" disabled={menyimpan} onClick={onBatal}>
-          {t("umum.batal")}
-        </Tombol>
-      </div>
-    </form>
   );
 }
 
@@ -282,6 +220,7 @@ export function DaftarFolder({ setelahPilih, padaBerubah, className }: PropertiD
           idKolom="folder-baru"
           label={t("pengorganisir.namaFolderBaru")}
           nilai={teksBaru}
+          maks={BATAS_PANJANG.namaFolderMaks}
           menyimpan={menyimpan}
           pesan={pesanBaru}
           onNilai={(nilai) => {
@@ -347,6 +286,7 @@ export function DaftarFolder({ setelahPilih, padaBerubah, className }: PropertiD
                   idKolom={`folder-${item.id}`}
                   label={t("pengorganisir.ubahNamaFolder")}
                   nilai={ubah.teks}
+                  maks={BATAS_PANJANG.namaFolderMaks}
                   menyimpan={menyimpan}
                   pesan={ubah.pesan}
                   onNilai={(nilai) => setUbah({ ...ubah, teks: nilai, pesan: null })}

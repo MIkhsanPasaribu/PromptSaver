@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { CheckIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 
@@ -7,8 +7,8 @@ import { useNavigasi } from "@/app/store/navigasi-store";
 import { lencanaVariants } from "@/components/ui/lencana-varian";
 import { Tombol } from "@/components/ui/button";
 import { DialogKonfirmasi } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label, Petunjuk } from "@/components/ui/label";
+import { FormNama } from "@/components/ui/inline-name-form";
+import { Petunjuk } from "@/components/ui/label";
 import {
   BATAS_PANJANG,
   WARNA_TAG,
@@ -102,45 +102,21 @@ function FormTag({
   onBatal: () => void;
 }) {
   const { t } = useTerjemah();
-  const kolom = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    kolom.current?.focus();
-    kolom.current?.select();
-  }, []);
 
   return (
-    <form
-      className="flex animate-in flex-col gap-xs fade-in-0 slide-in-from-top-1 duration-[180ms] ease-standard"
-      onSubmit={(event) => {
-        event.preventDefault();
-        onSimpan();
-      }}
-    >
-      <Label htmlFor={idKolom}>{label}</Label>
-      <Input
-        id={idKolom}
-        ref={kolom}
-        value={draf.nama}
-        maxLength={BATAS_PANJANG.namaTagMaks}
-        aria-invalid={draf.pesan ? true : undefined}
-        placeholder={t("pengorganisir.namaTag")}
-        onChange={(event) => onDraf({ ...draf, nama: event.target.value, pesan: null })}
-        onKeyDown={(event) => {
-          if (event.key === "Escape") onBatal();
-        }}
-      />
-      <PemilihWarna warna={draf.warna} onWarna={(warna) => onDraf({ ...draf, warna })} />
-      {draf.pesan && <Petunjuk galat>{draf.pesan}</Petunjuk>}
-      <div className="flex items-center gap-xs">
-        <Tombol type="submit" varian="utama" disabled={menyimpan}>
-          {menyimpan ? t("umum.menyimpan") : t("umum.simpan")}
-        </Tombol>
-        <Tombol type="button" varian="sekunder" disabled={menyimpan} onClick={onBatal}>
-          {t("umum.batal")}
-        </Tombol>
-      </div>
-    </form>
+    <FormNama
+      idKolom={idKolom}
+      label={label}
+      nilai={draf.nama}
+      maks={BATAS_PANJANG.namaTagMaks}
+      placeholder={t("pengorganisir.namaTag")}
+      pesan={draf.pesan}
+      menyimpan={menyimpan}
+      onNilai={(nama) => onDraf({ ...draf, nama, pesan: null })}
+      onSimpan={onSimpan}
+      onBatal={onBatal}
+      anak={<PemilihWarna warna={draf.warna} onWarna={(warna) => onDraf({ ...draf, warna })} />}
+    />
   );
 }
 

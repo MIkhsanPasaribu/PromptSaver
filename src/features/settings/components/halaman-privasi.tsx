@@ -1,7 +1,7 @@
-import { ArrowLeftIcon, ShieldCheckIcon } from "lucide-react";
+import { ShieldCheckIcon } from "lucide-react";
 
 import { Kartu, JudulKartu } from "@/components/ui/card";
-import { Tombol } from "@/components/ui/button";
+import { KepalaLayar } from "@/components/ui/page-header";
 import { useNavigasi } from "@/app/store/navigasi-store";
 import { useTerjemah } from "@/lib/i18n";
 
@@ -39,16 +39,11 @@ export function HalamanPrivasi() {
 
   return (
     <div className="grid gap-lg">
-      <div className="flex items-center justify-between gap-sm">
-        <h1 className="flex items-center gap-xs font-display text-headline-lg">
-          <ShieldCheckIcon aria-hidden />
-          {t("pengaturan.privasiJudul")}
-        </h1>
-        <Tombol varian="hantu" ukuran="kecil" onClick={() => navigasi.kembali()}>
-          <ArrowLeftIcon aria-hidden />
-          {t("umum.kembali")}
-        </Tombol>
-      </div>
+      <KepalaLayar
+        judul={t("pengaturan.privasiJudul")}
+        ikon={<ShieldCheckIcon aria-hidden />}
+        padaKembali={() => navigasi.kembali()}
+      />
 
       <p className="text-body-md text-secondary">{t("pengaturan.privasiPengantar")}</p>
 
