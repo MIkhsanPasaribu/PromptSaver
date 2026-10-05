@@ -34,3 +34,19 @@ if (!window.matchMedia) {
     dispatchEvent: () => false,
   })) as unknown as typeof window.matchMedia;
 }
+
+// jsdom belum punya Blob.text(), yang dipakai layar Transfer untuk membaca isi berkas dari
+// pemilih berkas WebView. API ini ada di WebView Android dan desktop, jadi hanya test yang perlu
+// ditambal.
+if (!("text" in Blob.prototype)) {
+  Object.defineProperty(Blob.prototype, "text", {
+    value: function bacaTeks(this: Blob) {
+      return new Promise<string>((selesai, gagal) => {
+        const pembaca = new FileReader();
+        pembaca.onload = () => selesai(String(pembaca.result));
+        pembaca.onerror = () => gagal(pembaca.error);
+        pembaca.readAsText(this);
+      });
+    },
+  });
+}

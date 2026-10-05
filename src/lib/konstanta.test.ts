@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import { BATAS_PANJANG } from "@/features/prompts/types/prompt.types";
+import { BATAS_BERKAS_IMPOR } from "@/features/transfer/hooks/use-transfer";
 import { WIDGET_MAKS, WIDGET_MIN } from "@/app/store/pengaturan-store";
 import { UKURAN_AWAL } from "@/features/widget/hooks/use-mode-jendela";
 
@@ -26,6 +27,12 @@ const pasanganKarang = (jalur: string, nama: string) => {
   return { lebar, tinggi };
 };
 
+/** Batas ukuran berkas ditulis sebagai perkalian (50 * 1024 * 1024), bukan satu angka. */
+const rumusKarang = (jalur: string, nama: string) =>
+  nilaiKarang(jalur, nama)
+    .split("*")
+    .reduce((hasil, bagian) => hasil * Number(bagian.trim().replace(/_/g, "")), 1);
+
 describe("konstanta cermin frontend dan backend", () => {
   it("batas panjang mengikuti service dan model Rust", () => {
     expect(BATAS_PANJANG.isiMaks).toBe(angkaKarang("src/features/prompts/model.rs", "PANJANG_ISI_MAKS"));
@@ -49,5 +56,11 @@ describe("konstanta cermin frontend dan backend", () => {
     const konfig = JSON.parse(readFileSync("src-tauri/tauri.conf.json", "utf8"));
     const jendela = konfig.app.windows[0];
     expect(UKURAN_AWAL).toEqual({ lebar: jendela.width, tinggi: jendela.height });
+  });
+
+  it("batas berkas yang dikirim dari WebView mengikuti format.rs", () => {
+    expect(BATAS_BERKAS_IMPOR).toBe(
+      rumusKarang("src/features/transfer/format.rs", "UKURAN_BERKAS_MAKS"),
+    );
   });
 });
