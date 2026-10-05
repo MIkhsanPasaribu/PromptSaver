@@ -2,14 +2,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
 import { deteksiModeJendela } from "@/app/store/pengaturan-store";
+import { terjemah } from "@/lib/i18n";
 import { pesanGalat } from "@/lib/ipc";
 import { beriTahuGalat } from "@/lib/notifikasi";
 
 import { keluarModeWidget, masukModeWidget } from "../services/widget-service";
 
 /** Ukuran jendela bawaan `tauri.conf.json`. Dipakai sampai pengukuran pertama selesai,
-   supaya shell tidak sempat merender mode yang salah saat aplikasi baru dibuka. */
-const UKURAN_AWAL = { lebar: 1120, tinggi: 760 };
+   supaya shell tidak sempat merender mode yang salah saat aplikasi baru dibuka. Penjaga
+   `src/lib/konstanta.test.ts` membandingkannya dengan isi konfigurasi Tauri. */
+export const UKURAN_AWAL = { lebar: 1120, tinggi: 760 };
 
 export type UkuranJendela = {
   /** Piksel logis, sebanding dengan ambang `deteksiModeJendela`. */
@@ -91,26 +93,26 @@ export function gunakanModeJendela(): HasilModeJendela {
   }, [perbaruiUkuran]);
 
   const jalankanMode = useCallback(
-    async (aksi: () => Promise<unknown>, pesanGagal: string) => {
+    async (aksi: () => Promise<unknown>, kunciGagal: string) => {
       try {
         await aksi();
         await perbaruiUkuran();
       } catch (mentah) {
-        beriTahuGalat(`${pesanGagal} ${pesanGalat(mentah)}`);
+        beriTahuGalat(`${terjemah(kunciGagal)} ${pesanGalat(mentah)}`);
       }
     },
     [perbaruiUkuran],
   );
 
   const masukWidget = useCallback(
-    () => jalankanMode(masukModeWidget, "Widget tidak dapat dibuka."),
+    () => jalankanMode(masukModeWidget, "widget.gagalBukaWidget"),
     [jalankanMode],
   );
 
   // Geometri mode penuh ikut tersimpan setelah ukuran berubah, lewat pemantau resize
   // di TampilanWidget, jadi di sini cukup melepaskan mode widget.
   const perluas = useCallback(
-    () => jalankanMode(keluarModeWidget, "Jendela tidak dapat diperluas."),
+    () => jalankanMode(keluarModeWidget, "widget.gagalPerluas"),
     [jalankanMode],
   );
 

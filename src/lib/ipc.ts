@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 
 import { terjemahkanPesan } from "@/lib/galat";
+import galatId from "@/lib/i18n/sumber/galat-id";
 
 /** Bentuk galat yang dipakai seluruh frontend. isomorf dengan `GalatAplikasi` di Rust. */
 export class GalatAplikasi extends Error {
@@ -20,10 +21,7 @@ function petakan(mentah: unknown): GalatAplikasi {
   if (mentah instanceof GalatAplikasi) return mentah;
   const objek = (typeof mentah === "object" && mentah !== null ? mentah : {}) as BENTUK_GALAT;
   if (objek.pesan) return new GalatAplikasi(objek.kode ?? "tidak_diketahui", objek.pesan);
-  return new GalatAplikasi(
-    "tidak_diketahui",
-    "Terjadi masalah yang tidak terduga. Data Anda tidak dihapus.",
-  );
+  return new GalatAplikasi("tidak_diketahui", galatId.sistem);
 }
 
 export async function panggil<T>(command: string, argumen?: Record<string, unknown>): Promise<T> {

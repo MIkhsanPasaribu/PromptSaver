@@ -77,7 +77,7 @@ export default {
   petunjukDaftarPintasan: "The list of keyboard shortcuts that apply in this app.",
   hapusSemuaData: "Delete all data",
   petunjukHapusSemuaData: "Deletes every prompt, folder, tag, draft, and setting from this device.",
-  lencanaBelumAdaCadangan: "No backup yet? Export one first from the Export and Import menu.",
+  petunjukBelumAdaCadangan: "No backup yet? Export one first from the Export and Import menu.",
   judulKonfirmasiHapus: "Delete all data?",
   judulKonfirmasiKedua: "Confirm the second step",
   petunjukKonfirmasiHapus:

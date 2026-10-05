@@ -5,6 +5,8 @@ export const widget = {
   perluas: "Perluas",
   tutupWidget: "Tutup widget",
   gagalSembunyikan: "Widget tidak dapat disembunyikan. {{pesan}}",
+  gagalBukaWidget: "Widget tidak dapat dibuka.",
+  gagalPerluas: "Jendela tidak dapat diperluas.",
   salinPrompt: "Salin prompt {{judul}}",
   promptTersalin: "{{judul}} tersalin",
   promptBaru: "Prompt baru",

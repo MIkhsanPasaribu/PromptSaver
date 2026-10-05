@@ -11,6 +11,7 @@ import {
   ubahPrompt,
 } from "@/features/prompts/services/prompt-service";
 import type { DaftarFilter, DataPrompt, Prompt } from "@/features/prompts/types/prompt.types";
+import { terjemah } from "@/lib/i18n";
 import { pesanGalat } from "@/lib/ipc";
 import { beriTahuBerhasil, beriTahuGalat } from "@/lib/notifikasi";
 
@@ -107,10 +108,12 @@ export function gunakanDaftarPrompt(filter: DaftarFilter): KeadaanPrompt {
     muatUlang: () => muat(0, true),
     muatBerikutnya: () => muat(offset, false),
     ambilSatu: (id) => jalankan(ambilPrompt(id)),
-    buat: async (data) => tersimpan(await jalankan(buatPrompt(data), "Prompt tersimpan.")),
+    buat: async (data) =>
+      tersimpan(await jalankan(buatPrompt(data), terjemah("prompt.toastTersimpan"))),
     ubah: async (id, data) =>
-      tersimpan(await jalankan(ubahPrompt(id, data), "Perubahan tersimpan.")),
-    duplikat: async (id) => tersimpan(await jalankan(duplikatPrompt(id), "Salinan dibuat.")),
+      tersimpan(await jalankan(ubahPrompt(id, data), terjemah("prompt.toastDiubah"))),
+    duplikat: async (id) =>
+      tersimpan(await jalankan(duplikatPrompt(id), terjemah("prompt.toastDuplikat"))),
     tandaiFavorit: async (id, aktif) => {
       const hasil = await jalankan(gantiFavoritPrompt(id, aktif));
       if (hasil) setDaftar((sebelum) => sebelum.map((p) => (p.id === id ? hasil : p)));
@@ -119,7 +122,9 @@ export function gunakanDaftarPrompt(filter: DaftarFilter): KeadaanPrompt {
       await tersimpan(await jalankan(gantiDisematPrompt(id, aktif)));
     },
     pindahkan: async (id, folderId) => {
-      await tersimpan(await jalankan(pindahFolderPrompt(id, folderId), "Prompt dipindahkan."));
+      await tersimpan(
+        await jalankan(pindahFolderPrompt(id, folderId), terjemah("prompt.toastDipindahkan")),
+      );
     },
   };
 }

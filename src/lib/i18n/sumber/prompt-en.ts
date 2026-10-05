@@ -42,6 +42,12 @@ const prompt = {
   lanjutMengetik: "Keep typing",
   buang: "Discard",
 
+  // Pesan aksi daftar dan form
+  toastTersimpan: "Prompt saved.",
+  toastDiubah: "Changes saved.",
+  toastDuplikat: "Duplicate created.",
+  toastDipindahkan: "Prompt moved.",
+
   // Dialog isian variabel (C2)
   isiVariabel: "Fill in variables",
   isiVariabelPesan: "Values are used for this copy only. The original prompt text stays the same.",

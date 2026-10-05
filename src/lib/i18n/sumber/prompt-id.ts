@@ -46,6 +46,12 @@ const prompt = {
   lanjutMengetik: "Lanjut mengetik",
   buang: "Buang",
 
+  // Toast aksi pada layar koleksi dan form.
+  toastTersimpan: "Prompt tersimpan.",
+  toastDiubah: "Perubahan tersimpan.",
+  toastDuplikat: "Salinan dibuat.",
+  toastDipindahkan: "Prompt dipindahkan.",
+
   // Dialog isian variabel (C2)
   isiVariabel: "Isi variabel",
   isiVariabelPesan: "Nilai hanya dipakai untuk salinan ini. Isi prompt aslinya tidak berubah.",

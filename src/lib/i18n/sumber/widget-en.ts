@@ -4,6 +4,8 @@ export const widget = {
   perluas: "Expand",
   tutupWidget: "Close widget",
   gagalSembunyikan: "The widget could not be hidden. {{pesan}}",
+  gagalBukaWidget: "The widget could not be opened.",
+  gagalPerluas: "The window could not be enlarged.",
   salinPrompt: "Copy prompt {{judul}}",
   promptTersalin: "{{judul}} copied",
   promptBaru: "New prompt",

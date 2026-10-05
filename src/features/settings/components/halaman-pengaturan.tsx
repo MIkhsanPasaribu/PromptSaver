@@ -4,15 +4,15 @@ import {
   RefreshCwIcon,
   SaveIcon,
   Trash2Icon,
-  ArrowLeftIcon,
   KeyboardIcon,
   ShieldCheckIcon,
   TriangleAlertIcon,
 } from "lucide-react";
 
-import { ChipPilih, Lencana } from "@/components/ui/badge";
+import { ChipPilih } from "@/components/ui/badge";
 import { Tombol } from "@/components/ui/button";
 import { Kartu } from "@/components/ui/card";
+import { KepalaLayar } from "@/components/ui/page-header";
 import {
   Dialog,
   DialogDeskripsi,
@@ -42,8 +42,9 @@ import {
   type Pengaturan,
   type Tema,
 } from "@/features/settings/services/settings-service";
-import { gunakanModeJendela } from "@/features/widget/hooks/use-mode-jendela";
-import { deteksiPlatform, terapkanPintasanGlobal } from "@/features/widget/services/widget-service";
+import { gunakanModeJendela } from "@/features/widget";
+import { terapkanPintasanGlobal } from "@/features/widget/services/widget-service";
+import { deteksiPlatform } from "@/lib/platform";
 import { useNavigasi } from "@/app/store/navigasi-store";
 import { usePengaturan } from "@/app/store/pengaturan-store";
 import { DAFTAR_BAHASA, useTerjemah } from "@/lib/i18n";
@@ -189,13 +190,7 @@ export function HalamanPengaturan() {
 
   return (
     <div className="grid gap-lg">
-      <div className="flex items-center justify-between gap-sm">
-        <h1 className="font-display text-headline-lg">{t("pengaturan.judul")}</h1>
-        <Tombol varian="hantu" ukuran="kecil" onClick={() => navigasi.kembali()}>
-          <ArrowLeftIcon aria-hidden />
-          {t("umum.kembali")}
-        </Tombol>
-      </div>
+      <KepalaLayar judul={t("pengaturan.judul")} padaKembali={() => navigasi.kembali()} />
 
       <Kartu as="section" className="grid gap-md">
         <h2 className="font-display text-headline-sm">{t("pengaturan.tampilan")}</h2>
@@ -545,7 +540,7 @@ export function HalamanPengaturan() {
           </Tombol>
         </div>
 
-        <Lencana warna="netral">{t("pengaturan.lencanaBelumAdaCadangan")}</Lencana>
+        <Petunjuk>{t("pengaturan.petunjukBelumAdaCadangan")}</Petunjuk>
       </Kartu>
 
       <Dialog open={konfirmasi > 0} onOpenChange={(buka) => !buka && setKonfirmasi(0)}>

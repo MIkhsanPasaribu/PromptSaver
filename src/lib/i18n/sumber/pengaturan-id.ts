@@ -79,7 +79,7 @@ export default {
   hapusSemuaData: "Hapus semua data",
   petunjukHapusSemuaData:
     "Menghapus seluruh prompt, folder, tag, draf, dan pengaturan dari perangkat ini.",
-  lencanaBelumAdaCadangan: "Belum ada cadangan? Ekspor dulu lewat menu Ekspor dan Impor.",
+  petunjukBelumAdaCadangan: "Belum ada cadangan? Ekspor dulu lewat menu Ekspor dan Impor.",
   judulKonfirmasiHapus: "Hapus semua data?",
   judulKonfirmasiKedua: "Konfirmasi langkah kedua",
   petunjukKonfirmasiHapus:
