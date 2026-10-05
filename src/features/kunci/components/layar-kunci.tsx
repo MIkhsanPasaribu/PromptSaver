@@ -62,10 +62,10 @@ export function LayarKunci() {
   };
 
   return (
-    <div className="flex min-h-dvh w-screen items-center justify-center bg-neutral p-md">
+    <div className="flex min-h-dvh w-screen flex-col items-center overflow-y-auto overscroll-contain bg-neutral p-md">
       {/* Lebar ditulis sebagai nilai bebas: pada Tailwind v4 di proyek ini `max-w-sm` mengambil
           token jarak `--spacing-sm` (12px), jadi kartu menyusut dan teksnya meluber keluar bingkai. */}
-      <Kartu as="section" className="grid w-full max-w-[384px] gap-md shadow-elev-3">
+      <Kartu as="section" className="my-auto grid w-full max-w-[384px] gap-md shadow-elev-3">
         <div className="flex items-center gap-xs">
           <img
             src={logoMerek}

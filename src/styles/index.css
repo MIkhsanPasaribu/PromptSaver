@@ -233,18 +233,26 @@
     color: var(--color-on-surface);
     background-color: var(--color-neutral);
     -webkit-text-size-adjust: 100%;
+    height: 100%;
+    /* Dokumen tidak boleh menjadi pemgulir. Di WebView Android viewport tata letak lebih tinggi
+       dari area yang terlihat (terukur 1090 px vs 914 px), sehingga dokumen masih bisa digeser
+       176 px walaupun tidak ada isinya yang meluber — dan yang bergeser adalah seluruh shell,
+       termasuk navigasi bawah. Yang menggulir adalah main di dalam shell, setinggi dvh. */
+    overflow: hidden;
   }
 
   body {
     margin: 0;
-    /* dvh, bukan vh: di WebView Android `100vh` mengacu ke viewport besar (area di belakang
-       bilah sistem), lebih tinggi dari yang benar-benar terlihat. Body jadi overflow dan
-       dokumen ikut bergulir — seluruh shell, termasuk navigasi bawah, terangkat dari posisinya. */
-    min-height: 100dvh;
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
     background-color: var(--color-neutral);
     color: var(--color-on-surface);
     text-rendering: optimizeLegibility;
-    overscroll-behavior: none;
+  }
+
+  #root {
+    height: 100%;
   }
 
   ::selection {

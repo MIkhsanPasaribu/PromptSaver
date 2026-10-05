@@ -49,12 +49,12 @@ export function LayarOnboarding() {
   const terakhir = indeks === LAYAR.length - 1;
 
   return (
-    <div className="grid min-h-dvh w-screen place-items-center bg-neutral p-lg">
+    <div className="flex min-h-dvh w-screen flex-col items-center overflow-y-auto overscroll-contain bg-neutral p-lg">
       <motion.section
         initial={VARIAN.masukBaris.initial}
         animate={VARIAN.masukBaris.animate}
         transition={VARIAN.masukBaris.transition}
-        className="w-full max-w-[560px] border-2 border-primary bg-surface p-xl shadow-elev-5"
+        className="my-auto w-full max-w-[560px] border-2 border-primary bg-surface p-xl shadow-elev-5"
         aria-live="polite"
       >
         <div className="mb-lg flex items-center justify-between gap-sm">

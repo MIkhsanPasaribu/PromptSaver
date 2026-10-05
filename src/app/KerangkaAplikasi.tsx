@@ -174,7 +174,7 @@ function KerangkaDesktop() {
             {t("navigasi.modeWidget")}
           </Tombol>
         </div>
-        <main className="flex min-h-0 flex-1 flex-col gap-md overflow-y-auto px-md pb-md pt-md md:px-lg md:pb-lg md:pt-lg">
+        <main className="flex min-h-0 flex-1 flex-col gap-md overflow-y-auto overscroll-contain px-md pb-md pt-md md:px-lg md:pb-lg md:pt-lg">
           <PapanLayar />
         </main>
       </div>
@@ -206,7 +206,7 @@ function KerangkaMobile() {
         )}
       </header>
 
-      <main className="flex min-h-0 flex-1 flex-col overflow-y-auto p-md">
+      <main className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain p-md">
         <PapanLayar />
       </main>
 
@@ -257,7 +257,7 @@ function KerangkaWidget() {
 function LayarMuat() {
   const { t } = useTerjemah();
   return (
-    <div className="grid h-screen w-screen place-items-center bg-neutral">
+    <div className="grid h-dvh w-screen place-items-center bg-neutral">
       <p className="font-display text-label-md text-secondary">{t("umum.muat")}</p>
     </div>
   );
