@@ -148,4 +148,21 @@ describe("HalamanTransfer jalur mobile", () => {
     );
     expect(screen.getByText("koleksi.promptsaver")).toBeInTheDocument();
   });
+
+  it("menolak berkas rusak dengan pesan yang tetap terlihat saat pratinjau gagal", async () => {
+    vi.mocked(layanan.pratinjauImporTeks).mockRejectedValueOnce(
+      new Error("Berkas tidak dapat dibaca."),
+    );
+    const user = userEvent.setup();
+    const { container } = render(<HalamanTransfer />);
+
+    await user.click(screen.getByRole("tab", { name: "Impor" }));
+    await user.upload(
+      container.querySelector('input[type="file"]') as HTMLElement,
+      new File(["x"], "rusak.promptsaver"),
+    );
+
+    expect(await screen.findByText(/tidak terduga|tidak dapat dibaca/)).toBeInTheDocument();
+    expect(vi.mocked(layanan.imporKoleksiTeks)).not.toHaveBeenCalled();
+  });
 });

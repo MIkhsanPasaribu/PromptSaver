@@ -549,6 +549,16 @@ export function HalamanTransfer({ berkas }: { berkas?: string }) {
               </div>
             )}
 
+            {/* Galat pratinjau harus tampil walau pratinjau gagal: kartu strategi di bawah hanya
+                dirender saat pratinjau ada, jadi menaruhnya di sana membuat berkas rusak ditolak
+                tanpa pesan (terukur di emulator API 37). */}
+            {bagianGalat === "impor" && galat ? (
+              <div className="flex items-center gap-xs">
+                <TriangleAlertIcon className="size-5 shrink-0 text-error" aria-hidden />
+                <Petunjuk galat>{galat}</Petunjuk>
+              </div>
+            ) : null}
+
             {pratinjau ? (
               <>
                 <dl className="grid grid-cols-2 gap-sm rounded-sm bg-surface-sunken p-sm md:grid-cols-3">
@@ -599,13 +609,6 @@ export function HalamanTransfer({ berkas }: { berkas?: string }) {
                 </div>
                 <Petunjuk>{kunciCatatanStrategi ? t(kunciCatatanStrategi) : ""}</Petunjuk>
               </div>
-
-              {bagianGalat === "impor" && galat ? (
-                <div className="flex items-center gap-xs">
-                  <TriangleAlertIcon className="size-5 shrink-0 text-error" aria-hidden />
-                  <Petunjuk galat>{galat}</Petunjuk>
-                </div>
-              ) : null}
 
               <div className="flex flex-wrap items-center gap-sm">
                 <Tombol onClick={padaImpor} disabled={memuat}>
