@@ -3,13 +3,12 @@ import { LoaderCircleIcon, PlusIcon, AlertTriangleIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { Tombol } from "@/components/ui/button";
-import { KeadaanKosong } from "@/features/onboarding/components/keadaan-kosong";
+import { KeadaanKosong } from "@/features/onboarding";
 import { DialogSalin } from "@/features/prompts/components/dialog-salin";
 import { KartuPrompt } from "@/features/prompts/components/prompt-card";
 import { gunakanDaftarPrompt, JUMLAH_PER_HALAMAN } from "@/features/prompts/hooks/use-prompts";
 import { gunakanSalin } from "@/features/prompts/hooks/use-salin";
-import { gunakanPencarian } from "@/features/search/hooks/use-search";
-import { KolomCari } from "@/features/search/components/kolom-cari";
+import { KolomCari, gunakanPencarian } from "@/features/search";
 import { ChipPilih } from "@/components/ui/badge";
 import { useNavigasi } from "@/app/store/navigasi-store";
 import { gunakanUrutanDaftar } from "@/app/hooks/use-urutan-daftar";
