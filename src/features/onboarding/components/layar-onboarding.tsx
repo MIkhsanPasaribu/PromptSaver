@@ -49,7 +49,7 @@ export function LayarOnboarding() {
   const terakhir = indeks === LAYAR.length - 1;
 
   return (
-    <div className="grid min-h-screen w-screen place-items-center bg-neutral p-lg">
+    <div className="grid min-h-dvh w-screen place-items-center bg-neutral p-lg">
       <motion.section
         initial={VARIAN.masukBaris.initial}
         animate={VARIAN.masukBaris.animate}

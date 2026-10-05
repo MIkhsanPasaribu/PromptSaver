@@ -15,19 +15,19 @@ import { Tombol } from "@/components/ui/button";
 import { HalamanKategori, DaftarFolder } from "@/features/folders";
 import { DaftarTag } from "@/features/tags";
 import { FormPrompt, HalamanDetail, HalamanKoleksi } from "@/features/prompts";
-import { HalamanSampah } from "@/features/trash/components/halaman-sampah";
+import { HalamanSampah } from "@/features/trash";
 import { HalamanPengaturan, HalamanPrivasi, DaftarPintasan } from "@/features/settings";
 import { HalamanTransfer } from "@/features/transfer";
 import { LayarKunci } from "@/features/kunci";
 import { LayarOnboarding } from "@/features/onboarding";
 import { BilahAtasWidget, TampilanWidget, gunakanModeJendela } from "@/features/widget";
 import {
-  deteksiPlatform,
   sembunyikanWidget,
   terapkanTransparansi,
 } from "@/features/widget/services/widget-service";
 import { useNavigasi, type Layar } from "@/app/store/navigasi-store";
 import { pasangPengamatKunci, pasangPengamatLatar, useKunci } from "@/app/store/kunci-store";
+import { deteksiPlatform } from "@/lib/platform";
 import { pasangPengamatSistem, usePengaturan } from "@/app/store/pengaturan-store";
 import { gunakanPintasanAplikasi } from "@/app/hooks/use-pintasan";
 import { gunakanBerkasImpor } from "@/app/hooks/use-berkas-impor";
@@ -36,6 +36,7 @@ import { useTerjemah } from "@/lib/i18n";
 import { pesanGalat } from "@/lib/ipc";
 import { beriTahuGalat } from "@/lib/notifikasi";
 import { cn } from "@/lib/utils";
+import logoMerek from "@/assets/brand/logo-64.png";
 
 /** Daftar aksi navigasi utama, dipakai sidebar desktop dan bilah bawah mobile. `kunci` menunjuk
    kelompok `navigasi` di sumber daya i18n; `kunciPendek` hanya untuk bilah bawah mobile, karena
@@ -116,9 +117,13 @@ function KerangkaDesktop() {
     <div className="flex h-screen w-screen overflow-hidden bg-neutral">
       <aside className="hidden w-64 shrink-0 flex-col gap-md overflow-y-auto border-r-2 border-primary bg-neutral p-md md:flex lg:w-72">
         <div className="flex items-center gap-xs">
-          <span className="grid size-9 place-items-center rounded-sm border-2 border-primary bg-primary font-display text-label-md text-on-primary shadow-elev-1">
-            PS
-          </span>
+          <img
+            src={logoMerek}
+            alt=""
+            width={36}
+            height={36}
+            className="size-9 shrink-0 rounded-sm border-2 border-primary shadow-elev-1"
+          />
           <h1 className="font-display text-headline-sm">{t("navigasi.judul")}</h1>
         </div>
 
@@ -154,8 +159,8 @@ function KerangkaDesktop() {
         </div>
       </aside>
 
-      <main className="flex min-h-0 flex-1 flex-col gap-md p-md md:p-lg">
-        <div className="hidden items-center justify-end gap-xs md:flex">
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="hidden items-center justify-end gap-xs px-md pt-md md:flex md:px-lg md:pt-lg">
           <Tombol
             varian="sekunder"
             ukuran="ikonKecil"
@@ -169,8 +174,10 @@ function KerangkaDesktop() {
             {t("navigasi.modeWidget")}
           </Tombol>
         </div>
-        <PapanLayar />
-      </main>
+        <main className="flex min-h-0 flex-1 flex-col gap-md overflow-y-auto px-md pb-md pt-md md:px-lg md:pb-lg md:pt-lg">
+          <PapanLayar />
+        </main>
+      </div>
     </div>
   );
 }

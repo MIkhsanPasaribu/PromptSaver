@@ -8,6 +8,7 @@ import { Label, Petunjuk } from "@/components/ui/label";
 import { useKunci } from "@/app/store/kunci-store";
 import { useTerjemah } from "@/lib/i18n";
 import { pesanGalat } from "@/lib/ipc";
+import logoMerek from "@/assets/brand/logo-64.png";
 
 /** F4 layar kunci. Menggantikan seluruh shell, jadi tidak ada command data yang sempat dipanggil
    sebelum PIN diterima. Pinfield memakai type=password supaya isinya tidak terlihat di bahu. */
@@ -66,9 +67,13 @@ export function LayarKunci() {
           token jarak `--spacing-sm` (12px), jadi kartu menyusut dan teksnya meluber keluar bingkai. */}
       <Kartu as="section" className="grid w-full max-w-[384px] gap-md shadow-elev-3">
         <div className="flex items-center gap-xs">
-          <span className="grid size-9 place-items-center rounded-sm border-2 border-primary bg-primary font-display text-label-md text-on-primary">
-            PS
-          </span>
+          <img
+            src={logoMerek}
+            alt=""
+            width={36}
+            height={36}
+            className="size-9 shrink-0 rounded-sm border-2 border-primary"
+          />
           <h1 className="font-display text-headline-sm">{t("kunci.layarJudul")}</h1>
         </div>
 
