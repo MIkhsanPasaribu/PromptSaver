@@ -17,8 +17,8 @@ import { Input } from "@/components/ui/input";
 import { Label, Petunjuk } from "@/components/ui/label";
 import { MenuTombol } from "@/components/ui/menu";
 import { AreaTeks } from "@/components/ui/textarea";
-import { gunakanFolders } from "@/features/folders/hooks/use-folders";
-import { gunakanTags } from "@/features/tags/hooks/use-tags";
+import { gunakanFolders } from "@/features/folders";
+import { gunakanTags } from "@/features/tags";
 import {
   ambilDrafPrompt,
   ambilPrompt,

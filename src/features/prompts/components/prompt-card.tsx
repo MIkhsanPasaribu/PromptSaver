@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 
 import { Lencana } from "@/components/ui/badge";
 import { Tombol } from "@/components/ui/button";
-import { HasilSorotan } from "@/features/search/components/hasil-sorotan";
+import { HasilSorotan } from "@/features/search";
 import { useTerjemah } from "@/lib/i18n";
 import { tanggalRelatif } from "@/lib/format-waktu";
 import { DURASI, EASING } from "@/lib/animasi";

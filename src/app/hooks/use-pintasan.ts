@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
 import { useNavigasi } from "@/app/store/navigasi-store";
-import { gunakanModeJendela } from "@/features/widget/hooks/use-mode-jendela";
-import { deteksiPlatform } from "@/features/widget/services/widget-service";
+import { gunakanModeJendela } from "@/features/widget";
+import { deteksiPlatform } from "@/lib/platform";
 
 /** E5 pintasan keyboard desktop. Pintasan global (sistem) diatur terpisah di Pengaturan.
    `siap` menunda pemasangan sampai layar kunci terbuka: pintasan yang bekerja di balik layar

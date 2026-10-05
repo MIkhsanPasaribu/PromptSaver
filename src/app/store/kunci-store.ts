@@ -12,7 +12,7 @@ import {
   ubahJedaKunci,
   type StatusKunci,
 } from "@/features/kunci/services/kunci-service";
-import { deteksiPlatform } from "@/features/widget/services/widget-service";
+import { deteksiPlatform } from "@/lib/platform";
 import { terapkanKeDom } from "@/app/store/pengaturan-store";
 import { pesanGalat } from "@/lib/ipc";
 import { beriTahuGalat } from "@/lib/notifikasi";

@@ -19,7 +19,7 @@ import { Tab, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { daftarPrompt, statistikKoleksi } from "@/features/prompts/services/prompt-service";
 import type { Prompt, Statistik } from "@/features/prompts/types/prompt.types";
 import { AMBANG_BERKAS_BESAR, gunakanTransfer } from "@/features/transfer/hooks/use-transfer";
-import { deteksiPlatform } from "@/features/widget/services/widget-service";
+import { deteksiPlatform } from "@/lib/platform";
 import {
   STRATEGI_IMPOR as STRATEGI,
   namaBerkasBaku,

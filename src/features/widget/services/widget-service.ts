@@ -20,10 +20,3 @@ export const sembunyikanWidget = () => panggil<void>("sembunyikan_widget");
 /** Daftarkan ulang pintasan global setelah pengguna mengubah kombinasi atau saklar (PRD G3).
    Khusus desktop: command ini tidak terdaftar di mobile. */
 export const terapkanPintasanGlobal = () => panggil<void>("terapkan_pintasan_global");
-
-/** Deteksi platform dipakai untuk menyembunyikan aksi yang tidak ada di mobile. */
-export function deteksiPlatform(): "desktop" | "mobile" {
-  if (typeof navigator === "undefined") return "desktop";
-  const ponsel = /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
-  return ponsel ? "mobile" : "desktop";
-}

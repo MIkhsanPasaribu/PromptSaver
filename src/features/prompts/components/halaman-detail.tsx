@@ -17,7 +17,7 @@ import { Tombol } from "@/components/ui/button";
 import { Kartu } from "@/components/ui/card";
 import { DialogKonfirmasi } from "@/components/ui/dialog";
 import { MenuTombol } from "@/components/ui/menu";
-import { gunakanFolders } from "@/features/folders/hooks/use-folders";
+import { gunakanFolders } from "@/features/folders";
 import { gunakanSalin } from "@/features/prompts/hooks/use-salin";
 import { DaftarVersiPrompt } from "@/features/prompts/components/daftar-versi";
 import { DialogSalin } from "@/features/prompts/components/dialog-salin";

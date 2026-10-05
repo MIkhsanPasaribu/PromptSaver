@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Tombol } from "@/components/ui/button";
 import { Kartu } from "@/components/ui/card";
 import { Petunjuk } from "@/components/ui/label";
-import { gunakanStatistik } from "@/features/settings/hooks/use-statistik";
+import { gunakanStatistik } from "@/features/settings";
 import { terjemah, useTerjemah } from "@/lib/i18n";
 import { DaftarFolder } from "./daftar-folder";
 import { DaftarTag } from "@/features/tags";

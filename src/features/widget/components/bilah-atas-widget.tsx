@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils";
 import { Tombol, type PropertiTombol } from "@/components/ui/button";
 import { usePengaturan } from "@/app/store/pengaturan-store";
 import { useTerjemah } from "@/lib/i18n";
+import { deteksiPlatform } from "@/lib/platform";
 import { pesanGalat } from "@/lib/ipc";
 import { beriTahuGalat } from "@/lib/notifikasi";
 
 import {
-  deteksiPlatform,
   keluarModeWidget,
   sembunyikanWidget,
   simpanGeometriSekarang,
