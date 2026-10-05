@@ -2,11 +2,15 @@
 ;   https://github.com/tauri-apps/tauri/blob/tauri-cli-v2.12.0/crates/tauri-bundler/src/bundle/windows/nsis/installer.nsi
 ;
 ; Diarahkan oleh bundle.windows.nsis.template di src-tauri/tauri.conf.json. Placeholder Handlebars
-; ({{...}}) dan ${...} dibiarkan utuh: Tauri tetap yang mengisi nilainya, jadi konfigurasi normal
-; seperti installMode, languages, dan sidebarImage masih bekerja seperti biasa.
+; dan variabel NSIS di dalamnya dibiarkan utuh: Tauri tetap yang mengisi nilainya, jadi konfigurasi
+; normal seperti installMode, languages, dan sidebarImage masih bekerja seperti biasa.
+;
+; PENTING: jangan pernah menulis kurung-kurung-kunci di dalam komentar berkas ini. Seluruh berkas
+; di-render Handlebars sebelum makensis jalan, jadi contoh placeholder di komentar pun dianggap
+; sintaks template dan build gagal dengan "invalid handlebars syntax".
 ;
 ; SELISIH DARI ASLI - hanya dua, keduanya visual:
-;   1. BrandingText diganti dari ${COPYRIGHT} menjadi teks merek PromptSaver.
+;   1. BrandingText diganti dari nilai COPYRIGHT menjadi teks merek PromptSaver.
 ;   2. Ditambah MUI_BGCOLOR (krem) dan MUI_HEADERIMAGE_RIGHT di blok 'Penyesuaian PromptSaver'.
 ;
 ; SAAT NAIK VERSI TAURI: unduh template dari tag versi baru, diff terhadap berkas ini, lalu
