@@ -7,14 +7,37 @@ use tauri::{AppHandle, Manager};
 
 use crate::core::error::{GalatAplikasi, Hasil};
 
-/// Direktori data privat aplikasi: tempat database, folder tukar ekspor, dan cadangan berada.
+fn galat_jalur(sebab: tauri::Error) -> GalatAplikasi {
+    GalatAplikasi::baru(
+        "sistem",
+        format!("Lokasi berkas aplikasi tidak dapat dibaca: {sebab}"),
+    )
+}
+
+/// Direktori data privat aplikasi: tempat database, cadangan, dan transit berkas "Bagikan"
+/// berada. Di Android isinya tidak dapat dibuka aplikasi lain maupun pengelola berkas.
 pub fn dir_data(app: &AppHandle) -> Hasil<PathBuf> {
-    app.path().app_data_dir().map_err(|sebab| {
-        GalatAplikasi::baru(
-            "sistem",
-            format!("Lokasi berkas aplikasi tidak dapat dibaca: {sebab}"),
-        )
-    })
+    app.path().app_data_dir().map_err(galat_jalur)
+}
+
+/// Basis folder tukar berkas yang bisa dijangkau pengguna dari luar aplikasi.
+///
+/// `dir_data` sengaja tidak dipakai sebagai basis di Android: sejak Android 11 tidak ada satu pun
+/// pengelola berkas pihak ketiga yang boleh membuka `/data/user/0/<id>`, jadi berkas ekspor yang
+/// ditulis di sana tidak bisa dipindahkan dan berkas dari luar tidak bisa dimasukkan.
+/// `document_dir` di Android adalah penyimpanan eksternal milik aplikasi
+/// (`Android/data/<id>/files/Documents`): tertutup untuk aplikasi lain, ikut terhapus saat
+/// uninstal, dan terbaca lewat kabel USB. Selain Android, desktop sudah punya dialog simpan/buka
+/// sendiri, jadi folder tukar tetap berada di dalam direktori data.
+pub fn dir_tukar(app: &AppHandle) -> Hasil<PathBuf> {
+    #[cfg(target_os = "android")]
+    {
+        app.path().document_dir().map_err(galat_jalur)
+    }
+    #[cfg(not(target_os = "android"))]
+    {
+        dir_data(app)
+    }
 }
 
 /// Direktori sementara khusus test untuk jalur yang menyentuh disk. Namanya mengandung pid

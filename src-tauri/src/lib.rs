@@ -148,6 +148,8 @@ pub fn run() {
             features::transfer::command::ekspor_koleksi,
             features::transfer::command::pratinjau_impor,
             features::transfer::command::impor_koleksi,
+            features::transfer::command::pratinjau_impor_teks,
+            features::transfer::command::impor_koleksi_teks,
             features::transfer::command::nama_berkas_baku,
             features::transfer::command::ekspor_ke_folder,
             features::transfer::command::daftar_berkas_ekspor,

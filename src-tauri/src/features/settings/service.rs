@@ -88,12 +88,13 @@ pub fn atur_ulang(koneksi: &Connection) -> Hasil<PengaturanAplikasi> {
 }
 
 /// Hapus semua data. Butuh dua langkah konfirmasi di UI, dan setelah ini koleksi kosong.
-/// `sertakan_berkas` ikut mengosongkan folder cadangan dan folder tukar ekspor: tanpa itu,
-/// salinan plaintext seluruh koleksi tetap tertinggal di disk setelah pengguna meminta
+/// `sertakan_berkas` ikut mengosongkan folder cadangan dan seluruh folder tukar ekspor: tanpa
+/// itu, salinan plaintext seluruh koleksi tetap tertinggal di disk setelah pengguna meminta
 /// "hapus semua data" (PRD F3). Mengembalikan jumlah berkas yang ikut dihapus.
 pub fn hapus_semua_data(
     koneksi: &Connection,
     dir_data: &Path,
+    dir_tukar: &Path,
     sertakan_berkas: bool,
 ) -> Hasil<usize> {
     repository::hapus_semua_data(koneksi)?;
@@ -101,7 +102,7 @@ pub fn hapus_semua_data(
         return Ok(0);
     }
     let cadangan = crate::features::cadangan::service::kosongkan(dir_data)?;
-    let ekspor = crate::features::transfer::service::kosongkan_folder_ekspor(dir_data)?;
+    let ekspor = crate::features::transfer::service::kosongkan_folder_ekspor(dir_tukar, dir_data)?;
     Ok(cadangan + ekspor)
 }
 
@@ -335,10 +336,10 @@ mod tests {
         std::fs::write(folder_cadangan.join("lama.promptsaver"), b"x").unwrap();
 
         // Tanpa flag, berkas salinan tetap ada: pengguna harus memintanya secara sadar.
-        assert_eq!(hapus_semua_data(&koneksi, &dir, false).unwrap(), 0);
+        assert_eq!(hapus_semua_data(&koneksi, &dir, &dir, false).unwrap(), 0);
         assert!(folder_cadangan.join("lama.promptsaver").is_file());
 
-        assert_eq!(hapus_semua_data(&koneksi, &dir, true).unwrap(), 1);
+        assert_eq!(hapus_semua_data(&koneksi, &dir, &dir, true).unwrap(), 1);
         assert_eq!(std::fs::read_dir(&folder_cadangan).unwrap().count(), 0);
         let _ = std::fs::remove_dir_all(&dir);
 

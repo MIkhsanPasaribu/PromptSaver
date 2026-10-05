@@ -3,7 +3,7 @@
 use tauri::{AppHandle, State};
 
 use crate::core::error::GalatAplikasi;
-use crate::core::paths::dir_data;
+use crate::core::paths::{dir_data, dir_tukar};
 use crate::core::state::StateAplikasi;
 use crate::core::task::dengan_koneksi_di_latar;
 use crate::features::settings::model::{PatchPengaturan, PengaturanAplikasi};
@@ -35,16 +35,18 @@ pub fn atur_ulang_pengaturan(
 }
 
 /// F3 hapus semua data. Frontend wajib mengirim konfirmasi dua langkah sebelum memanggil ini.
-/// `sertakan_berkas` ikut menghapus isi folder cadangan dan tukar ekspor (PRD F3). Dikerjakan di
-/// luar thread utama karena menyentuh database sekaligus seluruh isi folder di disk.
+/// `sertakan_berkas` ikut menghapus isi folder cadangan dan seluruh folder tukar ekspor (PRD F3),
+/// termasuk transit berkas "Bagikan" yang lokasinya terpisah di Android. Dikerjakan di luar thread
+/// utama karena menyentuh database sekaligus seluruh isi folder di disk.
 #[tauri::command]
 pub async fn hapus_semua_data(
     app: AppHandle,
     sertakan_berkas: bool,
 ) -> Result<usize, GalatAplikasi> {
     let dir = dir_data(&app)?;
+    let tukar = dir_tukar(&app)?;
     dengan_koneksi_di_latar(app, move |koneksi| {
-        service::hapus_semua_data(koneksi, &dir, sertakan_berkas)
+        service::hapus_semua_data(koneksi, &dir, &tukar, sertakan_berkas)
     })
     .await
 }

@@ -1,10 +1,11 @@
-//! Command ekspor dan impor. Path dipilih pengguna lewat dialog bawaan OS di frontend,
-//! aplikasi tidak pernah menyentuh jaringan (PRD D1).
+//! Command ekspor dan impor. Path dipilih pengguna lewat dialog bawaan OS di frontend desktop,
+//! sedangkan mobile membaca isinya lewat pemilih berkas WebView lalu mengirim teksnya ke command
+//! `*_teks` di bawah. Aplikasi tidak pernah menyentuh jaringan (PRD D1).
 
 use tauri::{AppHandle, State};
 
 use crate::core::error::GalatAplikasi;
-use crate::core::paths::dir_data;
+use crate::core::paths::{dir_data, dir_tukar};
 use crate::core::state::StateAplikasi;
 use crate::core::task::dengan_koneksi_di_latar;
 use crate::features::transfer::model::{
@@ -37,6 +38,15 @@ pub async fn pratinjau_impor(
     dengan_koneksi_di_latar(app, move |koneksi| service::pratinjau(koneksi, &path)).await
 }
 
+/// Pratinjau berkas yang isinya dibacakan pemilih berkas WebView (mobile).
+#[tauri::command]
+pub async fn pratinjau_impor_teks(
+    app: AppHandle,
+    teks: String,
+) -> Result<PratinjauImpor, GalatAplikasi> {
+    dengan_koneksi_di_latar(app, move |koneksi| service::pratinjau_teks(koneksi, &teks)).await
+}
+
 #[tauri::command]
 pub async fn impor_koleksi(
     app: AppHandle,
@@ -46,15 +56,29 @@ pub async fn impor_koleksi(
     dengan_koneksi_di_latar(app, move |koneksi| service::impor(koneksi, &path, strategi)).await
 }
 
-/// Ekspor ke folder tukar aplikasi. `lokasi` pada hasil berisi path lengkap berkas yang
-/// baru ditulis, supaya layar bisa memakainya untuk impor tanpa memilih ulang (PRD D4).
+/// Impor berkas yang isinya dibacakan pemilih berkas WebView (mobile).
+#[tauri::command]
+pub async fn impor_koleksi_teks(
+    app: AppHandle,
+    teks: String,
+    strategi: StrategiKonflik,
+) -> Result<RingkasanImpor, GalatAplikasi> {
+    dengan_koneksi_di_latar(app, move |koneksi| {
+        service::impor_teks(koneksi, &teks, strategi)
+    })
+    .await
+}
+
+/// Ekspor ke folder tukar yang bisa dijangkau pengguna. `lokasi` pada hasil berisi path lengkap
+/// berkas yang baru ditulis, supaya layar bisa memakainya untuk impor tanpa memilih ulang
+/// (PRD D1).
 #[tauri::command]
 pub async fn ekspor_ke_folder(
     app: AppHandle,
     cakupan: CakupanEkspor,
     ids: Option<Vec<String>>,
 ) -> Result<RingkasanEkspor, GalatAplikasi> {
-    let dir = dir_data(&app)?;
+    let dir = dir_tukar(&app)?;
     let ids = ids.unwrap_or_default();
     dengan_koneksi_di_latar(app, move |koneksi| {
         service::ekspor_ke_folder(koneksi, &dir, cakupan, &ids)
@@ -62,10 +86,10 @@ pub async fn ekspor_ke_folder(
     .await
 }
 
-/// Berkas ekspor yang ada di folder tukar aplikasi, terbaru lebih dulu (PRD D4).
+/// Berkas ekspor yang ada di folder tukar dan di transit "Bagikan", terbaru lebih dulu (PRD D2).
 #[tauri::command]
 pub fn daftar_berkas_ekspor(app: AppHandle) -> Result<DaftarBerkasEkspor, GalatAplikasi> {
-    let (folder, berkas) = service::daftar_berkas_ekspor(&dir_data(&app)?)?;
+    let (folder, berkas) = service::daftar_berkas_ekspor(&dir_tukar(&app)?, &dir_data(&app)?)?;
     Ok(DaftarBerkasEkspor { folder, berkas })
 }
 

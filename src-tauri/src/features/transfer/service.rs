@@ -18,9 +18,9 @@ use crate::features::transfer::repository;
 /// Nama folder tukar berkas di dalam direktori data aplikasi.
 const NAMA_FOLDER_EKSPOR: &str = "ekspor";
 
-/// Susun berkas ekspor di memori tanpa menyentuh disk. Jalur desktop menambahkan satu langkah
-/// tulis lewat `ekspor`; jalur mobile menyerahkan teksnya ke lapisan berkas frontend, karena
-/// Android tidak memberikan path nyata ke aplikasi (PRD D1, D4).
+/// Susun berkas ekspor di memori tanpa menyentuh disk. `ekspor` menulisnya ke path pilihan
+/// pengguna (desktop), `ekspor_ke_folder` menulisnya ke folder tukar (mobile), dan pemanggil
+/// lain bisa memakai teks hasilnya tanpa menulis disk sama sekali (PRD D1).
 pub fn susun(
     koneksi: &Connection,
     cakupan: CakupanEkspor,
@@ -113,26 +113,53 @@ pub fn ekspor(
     Ok(ringkasan(&berkas, teks.len(), path))
 }
 
-/// Direktori tukar berkas milik aplikasi. Di Android dialog sistem mengembalikan URI
-/// `content://` yang tidak bisa dibaca `std::fs`, jadi mobile memakai folder privat ini sebagai
-/// titik temu: ekspor ditulis ke sini, berkas dari luar disalin pengguna ke sini lewat
-/// pengelola berkas. Desktop tidak memakai jalur ini karena dialog memberi path nyata.
-pub fn folder_ekspor(dir_data: &Path) -> Hasil<std::path::PathBuf> {
-    let folder = dir_data.join(NAMA_FOLDER_EKSPOR);
+/// Direktori tukar berkas milik aplikasi. `dir_data` dipakai sebagai tempat transit berkas yang
+/// datang lewat "Bagikan/Open with" (Activity Android menyalin URI content ke sana), sedangkan
+/// `dir_tukar` adalah folder yang ditulis ekspor dan bisa dijangkau pengguna dari luar aplikasi.
+/// Lihat `crate::core::paths::dir_tukar` untuk alasan keduanya terpisah di Android.
+pub fn folder_ekspor(dasar: &Path) -> Hasil<std::path::PathBuf> {
+    let folder = dasar.join(NAMA_FOLDER_EKSPOR);
     std::fs::create_dir_all(&folder)?;
     Ok(folder)
 }
 
-/// Kosongkan isi folder tukar ekspor tanpa menghapus foldernya (PRD F3).
-pub fn kosongkan_folder_ekspor(dir_data: &Path) -> Hasil<usize> {
-    crate::core::paths::hapus_isi_folder(&dir_data.join(NAMA_FOLDER_EKSPOR))
+/// Folder yang ikut dihitung saat menampilkan dan membersihkan berkas tukar. Di Android ada dua
+/// (eksternal milik aplikasi + transit privat); di desktop `dir_tukar` sama dengan `dir_data`,
+/// jadi satu folder saja yang dipakai dan tidak ada berkas yang dihitung dua kali.
+fn daftar_folder_tukar(dasar_utama: &Path, dasar_transit: &Path) -> Hasil<Vec<std::path::PathBuf>> {
+    let utama = folder_ekspor(dasar_utama)?;
+    let transit = folder_ekspor(dasar_transit)?;
+    if transit == utama {
+        return Ok(vec![utama]);
+    }
+    Ok(vec![utama, transit])
+}
+
+/// Kosongkan seluruh folder tukar tanpa menghapus foldernya (PRD F3).
+pub fn kosongkan_folder_ekspor(dasar_utama: &Path, dasar_transit: &Path) -> Hasil<usize> {
+    let mut jumlah = 0;
+    for folder in daftar_folder_tukar(dasar_utama, dasar_transit)? {
+        jumlah += crate::core::paths::hapus_isi_folder(&folder)?;
+    }
+    Ok(jumlah)
 }
 
 /// Nama berkas berekstensi ekspor di folder tukar, terbaru lebih dulu. Path lengkap
 /// dikembalikan supaya frontend bisa meneruskannya ke command berbasis path yang sudah ada.
-pub fn daftar_berkas_ekspor(dir_data: &Path) -> Hasil<(String, Vec<String>)> {
-    let folder = folder_ekspor(dir_data)?;
-    let kumpul = crate::core::paths::kumpulkan_berkas(&folder, format::EKSTENSI_BERKAS)?;
+/// `folder` pada hasil adalah folder tempat pengguna menaruh dan mengambil berkas.
+pub fn daftar_berkas_ekspor(
+    dasar_utama: &Path,
+    dasar_transit: &Path,
+) -> Hasil<(String, Vec<String>)> {
+    let folder = folder_ekspor(dasar_utama)?;
+    let mut kumpul = Vec::new();
+    for dasar in daftar_folder_tukar(dasar_utama, dasar_transit)? {
+        kumpul.extend(crate::core::paths::kumpulkan_berkas(
+            &dasar,
+            format::EKSTENSI_BERKAS,
+        )?);
+    }
+    kumpul.sort_by_key(|(_, diubah_pada, _)| std::cmp::Reverse(*diubah_pada));
     Ok((
         folder.to_string_lossy().into_owned(),
         kumpul
@@ -142,16 +169,16 @@ pub fn daftar_berkas_ekspor(dir_data: &Path) -> Hasil<(String, Vec<String>)> {
     ))
 }
 
-/// Ekspor ke folder tukar aplikasi. Jalur mobile: dialog Android tidak menghasilkan path yang
-/// bisa dibuka `std::fs`, jadi berkas ditulis di lokasi privat yang bisa dibaca pengelola berkas.
+/// Ekspor ke folder tukar yang bisa dijangkau pengguna. Di Android inilah satu-satunya cara
+/// koleksi keluar dari perangkat, karena dialog simpan WebView tidak tersedia di sana.
 pub fn ekspor_ke_folder(
     koneksi: &Connection,
-    dir_data: &Path,
+    dasar: &Path,
     cakupan: CakupanEkspor,
     ids: &[String],
 ) -> Hasil<RingkasanEkspor> {
     let (berkas, teks) = susun(koneksi, cakupan, ids)?;
-    let jalur = folder_ekspor(dir_data)?.join(nama_berkas_baku());
+    let jalur = folder_ekspor(dasar)?.join(nama_berkas_baku());
     std::fs::write(&jalur, teks.as_bytes())?;
     Ok(ringkasan(&berkas, teks.len(), &jalur.to_string_lossy()))
 }
@@ -189,6 +216,24 @@ fn pratinjau_berkas(
 pub fn baca_berkas(path: &str) -> Hasil<(BerkasEkspor, usize)> {
     let bytes = std::fs::read(Path::new(path))?;
     baca_bytes(&bytes)
+}
+
+/// Pratinjau dari isi berkas yang sudah dibacakan lapisan web. Pemilih berkas WebView Android
+/// memberi isinya, bukan path yang bisa dibuka `std::fs`, jadi jalur ini ada di samping
+/// `pratinjau`. Validasi ukuran, checksum, dan versi skema tetap dijaga `baca_bytes`.
+pub fn pratinjau_teks(koneksi: &Connection, teks: &str) -> Hasil<PratinjauImpor> {
+    let (berkas, ukuran) = baca_bytes(teks.as_bytes())?;
+    pratinjau_berkas(koneksi, &berkas, ukuran)
+}
+
+/// Impor atomik dari isi berkas yang sudah dibacakan lapisan web.
+pub fn impor_teks(
+    koneksi: &Connection,
+    teks: &str,
+    strategi: StrategiKonflik,
+) -> Hasil<RingkasanImpor> {
+    let (berkas, _) = baca_bytes(teks.as_bytes())?;
+    jalankan_impor(koneksi, &berkas, strategi)
 }
 
 fn baca_bytes(bytes: &[u8]) -> Hasil<(BerkasEkspor, usize)> {
@@ -738,7 +783,7 @@ mod tests {
         );
         assert!(std::path::Path::new(&ringkasan.lokasi).exists());
 
-        let (folder, berkas) = daftar_berkas_ekspor(&dir).unwrap();
+        let (folder, berkas) = daftar_berkas_ekspor(&dir, &dir).unwrap();
         assert_eq!(berkas, vec![ringkasan.lokasi.clone()]);
         assert!(folder.ends_with("ekspor"));
 
@@ -763,11 +808,62 @@ mod tests {
         )
         .unwrap();
 
-        let (_, berkas) = daftar_berkas_ekspor(&dir).unwrap();
+        let (_, berkas) = daftar_berkas_ekspor(&dir, &dir).unwrap();
         assert_eq!(berkas.len(), 1, "hanya berkas ekspor yang dihitung");
         assert!(berkas[0].ends_with("cadangan.promptsaver"));
 
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn pratinjau_dan_impor_dari_teks_memakai_validasi_yang_sama() {
+        // Jalur pemilih berkas WebView: isi berkas datang sebagai teks, bukan path.
+        let asal = koneksi_uji().unwrap();
+        isi_koleksi(&asal);
+        let (_, teks) = susun(&asal, CakupanEkspor::Semua, &[]).unwrap();
+
+        let tujuan = koneksi_uji().unwrap();
+        let pratinjau = pratinjau_teks(&tujuan, &teks).unwrap();
+        assert_eq!(pratinjau.jumlah_prompt, 2);
+        assert_eq!(pratinjau.versi_skema, format::VERSI_SKEMA_BERKAS);
+
+        let hasil = impor_teks(&tujuan, &teks, StrategiKonflik::LewatiDuplikat).unwrap();
+        assert_eq!(hasil.ditambah, 2);
+
+        let galat = pratinjau_teks(&tujuan, "bukan json").unwrap_err();
+        assert_eq!(galat.kode, "berkas_rusak");
+        assert_eq!(
+            prompt_service::daftar(&tujuan, &Default::default())
+                .unwrap()
+                .len(),
+            1,
+            "teks yang ditolak tidak mengubah koleksi yang sudah masuk (satu prompt aktif)"
+        );
+    }
+
+    #[test]
+    fn folder_tukar_dan_transit_dihitung_terpisah_dan_tanpa_duplikasi() {
+        // Dua basis berbeda adalah keadaan Android (eksternal + privat); satu basis adalah desktop.
+        let utama = crate::core::paths::dir_uji("tukar-utama");
+        let transit = crate::core::paths::dir_uji("tukar-transit");
+        std::fs::write(folder_ekspor(&utama).unwrap().join("a.promptsaver"), b"x").unwrap();
+        std::fs::write(folder_ekspor(&transit).unwrap().join("b.promptsaver"), b"x").unwrap();
+
+        let (folder, berkas) = daftar_berkas_ekspor(&utama, &transit).unwrap();
+        assert_eq!(
+            berkas.len(),
+            2,
+            "berkas transit dari \"Bagikan\" harus tetap terlihat"
+        );
+        assert_eq!(folder, folder_ekspor(&utama).unwrap().to_string_lossy());
+
+        let (_, sendiri) = daftar_berkas_ekspor(&utama, &utama).unwrap();
+        assert_eq!(sendiri.len(), 1, "basis yang sama tidak dihitung dua kali");
+
+        assert_eq!(kosongkan_folder_ekspor(&utama, &transit).unwrap(), 2);
+        assert!(daftar_berkas_ekspor(&utama, &transit).unwrap().1.is_empty());
+        let _ = std::fs::remove_dir_all(&utama);
+        let _ = std::fs::remove_dir_all(&transit);
     }
 
     fn jalus_to_str(jalur: &std::path::Path) -> String {
