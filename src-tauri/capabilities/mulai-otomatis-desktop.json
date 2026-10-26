@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "mulai-otomatis-desktop",
+  "description": "Hanya desktop. Plugin autostart tidak dikompilasi untuk Android, jadi kemampuannya tidak ada di sana dan menaruhnya di default.json membuat build Android gagal saat membaca daftar izin.",
+  "windows": ["utama"],
+  "platforms": ["windows", "macOS", "linux"],
+  "permissions": ["autostart:default"]
+}
