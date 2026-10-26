@@ -1,5 +1,7 @@
 //! Fitur aplikasi. Setiap fitur punya lapisan command, service, repository, dan model.
 
+#[cfg(desktop)]
+pub mod autostart;
 pub mod cadangan;
 pub mod folders;
 pub mod kunci;

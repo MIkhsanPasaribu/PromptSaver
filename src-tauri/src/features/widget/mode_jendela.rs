@@ -6,7 +6,7 @@ use tauri::{AppHandle, LogicalPosition, LogicalSize, Manager, PhysicalPosition, 
 
 use crate::core::error::GalatAplikasi;
 use crate::core::state::StateAplikasi;
-use crate::features::settings::model::{Geometri, PatchPengaturan};
+use crate::features::settings::model::{Geometri, PatchPengaturan, PengaturanAplikasi};
 use crate::features::settings::service as settings;
 
 pub const LABEL_UTAMA: &str = "utama";
@@ -40,16 +40,36 @@ fn geometri_widget(diminta: Option<Geometri>) -> Geometri {
     }
 }
 
-#[tauri::command]
-pub fn masuk_mode_widget(
-    app: AppHandle,
-    state: tauri::State<'_, StateAplikasi>,
-) -> Result<Geometri, GalatAplikasi> {
-    let jendela = jendela_utama(&app)?;
-    let penuh = geometri_sekarang(&jendela)?;
-    simpan_geometri(&state, KunciGeometri::Penuh, &penuh)?;
-
+/// Ubah jendela utama menjadi Mode Widget dari keadaan apa pun.
+///
+/// Dipakai command IPC dan jalur mulai otomatis saat login, jadi aturannya tidak ditulis dua
+/// kali. Geometri mode penuh disimpan lebih dulu supaya tombol perluas bisa mengembalikannya.
+pub fn masuk(app: &AppHandle, state: &StateAplikasi) -> Result<Geometri, GalatAplikasi> {
     let penyimpanan = state.dengan_koneksi(settings::ambil)?;
+    terapkan_mode_widget(app, Some(state), &penyimpanan)
+}
+
+/// Bentuk widget tanpa membaca atau menulis database, memakai geometri bawaan.
+///
+/// Dipakai jalur mulai otomatis ketika PIN terpasang: gerbang kunci menolak seluruh command
+/// data, sementara bentuk jendela bukan data pengguna. Geometri mode penuh sengaja tidak
+/// ditimpa, jadi setelah PIN dibuka jendela masih bisa diperluas ke ukuran yang terakhir
+/// diingat.
+pub fn masuk_bawaan(app: &AppHandle) -> Result<Geometri, GalatAplikasi> {
+    terapkan_mode_widget(app, None, &PengaturanAplikasi::default())
+}
+
+fn terapkan_mode_widget(
+    app: &AppHandle,
+    state: Option<&StateAplikasi>,
+    penyimpanan: &PengaturanAplikasi,
+) -> Result<Geometri, GalatAplikasi> {
+    let jendela = jendela_utama(app)?;
+    let penuh = geometri_sekarang(&jendela)?;
+    if let Some(state) = state {
+        simpan_geometri(state, KunciGeometri::Penuh, &penuh)?;
+    }
+
     let desired = geometri_widget(penyimpanan.widget_geometri_mode);
 
     let aman = pastikan_di_dalam_layar(&jendela, desired)?;
@@ -69,8 +89,18 @@ pub fn masuk_mode_widget(
         .map_err(galat_jendela)?;
     jendela.set_focus().map_err(galat_jendela)?;
 
-    simpan_geometri(&state, KunciGeometri::Mode, &aman)?;
+    if let Some(state) = state {
+        simpan_geometri(state, KunciGeometri::Mode, &aman)?;
+    }
     Ok(aman)
+}
+
+#[tauri::command]
+pub fn masuk_mode_widget(
+    app: AppHandle,
+    state: tauri::State<'_, StateAplikasi>,
+) -> Result<Geometri, GalatAplikasi> {
+    masuk(&app, &state)
 }
 
 #[tauri::command]
@@ -136,7 +166,7 @@ pub enum KunciGeometri {
 }
 
 fn simpan_geometri(
-    state: &tauri::State<'_, StateAplikasi>,
+    state: &StateAplikasi,
     kunci: KunciGeometri,
     geometri: &Geometri,
 ) -> Result<(), GalatAplikasi> {
@@ -219,7 +249,7 @@ pub fn pastikan_di_dalam_layar(
     })
 }
 
-fn galat_jendela(sebab: tauri::Error) -> GalatAplikasi {
+pub(crate) fn galat_jendela(sebab: tauri::Error) -> GalatAplikasi {
     GalatAplikasi::baru(
         "jendela",
         format!("Pengaturan jendela tidak dapat diterapkan: {sebab}"),

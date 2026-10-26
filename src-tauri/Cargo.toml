@@ -26,10 +26,14 @@ sha2 = "0.11.0"
 thiserror = "2.0.21"
 tauri-plugin-biometric = "2.4.1"
 
-# Plugin khusus desktop. Mobile tidak punya tray, pintasan global, dan jendela tunggal.
+# Plugin khusus desktop. Mobile tidak punya tray, pintasan global, jendela tunggal,
+# maupun entri start saat login.
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-global-shortcut = "2"
 tauri-plugin-single-instance = "2"
+# Menulis entri HKCU\...\Run. Versi dikunci karena plugin ini tidak ada di daftar
+# AGENTS.md Bagian 4 dan disetujui pemilik proyek khusus fitur "mulai otomatis" (PRD G4).
+tauri-plugin-autostart = "2.7.0"
 
 # Anggaran keringanan dari AGENTS.md Bagian 4. Jangan dinaikkan tanpa keputusan pemilik proyek.
 [profile.release]

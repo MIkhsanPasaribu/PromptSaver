@@ -47,6 +47,7 @@ pub fn run() {
                     .with_handler(pintasan::penanganan_pintasan)
                     .build(),
             )
+            .plugin(features::autostart::plugin())
     };
 
     let hasil = builder
@@ -75,6 +76,14 @@ pub fn run() {
                     }
                 }
                 features::widget::tray::buat(app.handle())?;
+                // Aplikasi dijalankan sendiri oleh entri start: langsung kecilkan ke Mode
+                // Widget supaya tidak menutupi layar tepat setelah pengguna login. Kegagalan di
+                // sini tidak boleh menggagalkan start, jendela cukup tampil seperti biasa.
+                if features::autostart::diminta() {
+                    if let Err(sebab) = features::autostart::siapkan_jendela(app.handle()) {
+                        eprintln!("Mulai otomatis tidak menyiapkan jendela: {}", sebab.kode);
+                    }
+                }
                 // Pintasan global hanya didaftarkan bila pengguna sudah mengaktifkannya.
                 if let Err(sebab) = features::widget::pintasan::daftarkan(app.handle()) {
                     eprintln!("Pintasan global tidak terdaftar: {}", sebab.kode);

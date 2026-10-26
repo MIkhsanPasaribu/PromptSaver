@@ -37,6 +37,7 @@ pub fn ambil(koneksi: &Connection) -> Hasil<PengaturanAplikasi> {
             .unwrap_or(dasar.pintasan_global_aktif),
         pintasan_global: baca(koneksi, "pintasan_global")?.unwrap_or(dasar.pintasan_global),
         cadangan_otomatis: baca(koneksi, "cadangan_otomatis")?.unwrap_or(dasar.cadangan_otomatis),
+        mulai_otomatis: baca(koneksi, "mulai_otomatis")?.unwrap_or(dasar.mulai_otomatis),
     })
 }
 
@@ -78,6 +79,7 @@ pub fn simpan(koneksi: &Connection, patch: &PatchPengaturan) -> Hasil<Pengaturan
     )?;
     tulis(koneksi, "pintasan_global", &patch.pintasan_global)?;
     tulis(koneksi, "cadangan_otomatis", &patch.cadangan_otomatis)?;
+    tulis(koneksi, "mulai_otomatis", &patch.mulai_otomatis)?;
 
     ambil(koneksi)
 }
@@ -235,6 +237,35 @@ mod tests {
             !pengaturan.pintasan_global_aktif,
             "pintasan global mati di pemakaian pertama"
         );
+        assert!(
+            !pengaturan.mulai_otomatis,
+            "entri start sistem tidak dibuat sendiri pada pemakaian pertama"
+        );
+    }
+
+    #[test]
+    fn mulai_otomatis_tersimpan_dan_tidak_hilang_oleh_patch_lain() {
+        let koneksi = koneksi_uji().unwrap();
+        let hasil = simpan(
+            &koneksi,
+            &PatchPengaturan {
+                mulai_otomatis: Some(true),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert!(hasil.mulai_otomatis);
+
+        // Patch tanpa field ini tidak boleh menghapus pilihan pengguna.
+        simpan(
+            &koneksi,
+            &PatchPengaturan {
+                kurangi_animasi: Some(true),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert!(ambil(&koneksi).unwrap().mulai_otomatis);
     }
 
     #[test]

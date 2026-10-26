@@ -53,6 +53,9 @@ pub struct PengaturanAplikasi {
     pub pintasan_global: String,
     /// Cadangan otomatis mingguan di direktori data aplikasi (PRD D3).
     pub cadangan_otomatis: bool,
+    /// Aplikasi dijalankan sendiri saat pengguna masuk ke Windows. Nilainya hanya cermin dari
+    /// entri start sistem; keadaan sebenarnya dibaca lewat plugin autostart (desktop saja).
+    pub mulai_otomatis: bool,
 }
 
 impl Default for PengaturanAplikasi {
@@ -73,6 +76,9 @@ impl Default for PengaturanAplikasi {
             pintasan_global_aktif: false,
             pintasan_global: "Control+Alt+K".to_string(),
             cadangan_otomatis: true,
+            // Sama seperti pintasan global: fitur yang menyentuh sistem tidak menyala sendiri
+            // pada pemakaian pertama.
+            mulai_otomatis: false,
         }
     }
 }
@@ -95,4 +101,5 @@ pub struct PatchPengaturan {
     pub pintasan_global_aktif: Option<bool>,
     pub pintasan_global: Option<String>,
     pub cadangan_otomatis: Option<bool>,
+    pub mulai_otomatis: Option<bool>,
 }
