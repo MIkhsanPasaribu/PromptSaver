@@ -15,7 +15,10 @@ type KeadaanPengaturan = {
   pengaturan: Pengaturan | null;
   sedangMuat: boolean;
   muat: () => Promise<void>;
-  ubah: (patch: Partial<Pengaturan>) => Promise<void>;
+  /** true bila backend menerima patch. Nilai ini dipakai fitur yang punya efek di luar
+     aplikasi (misalnya entri start sistem) supaya efek itu tidak diterapkan saat penyimpanan
+     gagal dan nilai sudah dikembalikan sendiri oleh store. */
+  ubah: (patch: Partial<Pengaturan>) => Promise<boolean>;
   aturUlang: () => Promise<void>;
   /** Mengembalikan jumlah berkas cadangan/ekspor yang ikut terhapus, atau null bila gagal. */
   kosongkanData: (sertakanBerkas: boolean) => Promise<number | null>;
@@ -88,12 +91,14 @@ export const usePengaturan = create<KeadaanPengaturan>((set, get) => ({
       const data = await simpanPengaturan(patch);
       set({ pengaturan: data });
       terapkanKeDom(data);
+      return true;
     } catch (mentah) {
       if (sebelumnya) {
         set({ pengaturan: sebelumnya });
         terapkanKeDom(sebelumnya);
       }
       beriTahuGalat(pesanGalat(mentah));
+      return false;
     }
   },
 

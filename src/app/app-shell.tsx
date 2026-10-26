@@ -30,6 +30,7 @@ import { pasangPengamatKunci, pasangPengamatLatar, useKunci } from "@/app/store/
 import { deteksiPlatform } from "@/lib/platform";
 import { pasangPengamatSistem, usePengaturan } from "@/app/store/pengaturan-store";
 import { gunakanPintasanAplikasi } from "@/app/hooks/use-pintasan";
+import { gunakanSinkronMulaiOtomatis } from "@/features/settings/hooks/use-mulai-otomatis";
 import { gunakanBerkasImpor } from "@/app/hooks/use-berkas-impor";
 import { gunakanRiwayatBack } from "@/app/hooks/use-riwayat-back";
 import { useTerjemah } from "@/lib/i18n";
@@ -232,8 +233,11 @@ function KerangkaMobile() {
   );
 }
 
-/** Shell widget: bingkai tebal, bilah atas bisa digeser, daftar ringkas satu kolom. */
-function KerangkaWidget() {
+/** Shell widget: bingkai tebal, bilah atas bisa digeser, daftar ringkas satu kolom.
+   `terkunci` dipakai saat aplikasi menyala dalam keadaan terkunci (misalnya dari mulai
+   otomatis): yang tampil adalah layar kunci rapat, bukan daftar prompt, karena seluruh
+   command data masih ditolak backend dan `TampilanWidget` memanggilnya saat mounted. */
+function KerangkaWidget({ terkunci = false }: { terkunci?: boolean }) {
   // Esc menyembunyikan widget selama tidak ada dialog yang terbuka. Dialog memakai Esc
   // untuk menutup dirinya sendiri lewat Radix, dan elemennya masih ada saat event ini jalan.
   useEffect(() => {
@@ -247,8 +251,8 @@ function KerangkaWidget() {
 
   return (
     <div className="permukaan-widget flex h-screen w-screen flex-col overflow-hidden border-[3px] border-primary bg-surface">
-      <BilahAtasWidget />
-      <TampilanWidget modeWidget />
+      <BilahAtasWidget terkunci={terkunci} />
+      {terkunci ? <LayarKunci rapat /> : <TampilanWidget modeWidget />}
     </div>
   );
 }
@@ -285,6 +289,11 @@ export default function KerangkaAplikasi() {
     void muatPengaturan();
   }, [terkunci, muatPengaturan]);
 
+  // Saklar "mulai otomatis" hanyalah cermin dari entri start sistem, jadi keadaannya dibaca
+  // sekali setelah pengaturan siap. Bila pengguna mematikannya dari Settings > Apps > Startup
+  // Windows, layar Pengaturan tidak lagi menampilkan keadaan lama.
+  gunakanSinkronMulaiOtomatis(!terkunci && !sedangMuat);
+
   useEffect(() => {
     const lepasSistem = pasangPengamatSistem();
     const lepasLatar = pasangPengamatLatar();
@@ -313,7 +322,11 @@ export default function KerangkaAplikasi() {
 
   // Layar kunci diperiksa lebih dulu: shell tidak boleh sempat merender daftar apa pun, dan
   // pengaturan belum tentu sempat dimuat saat aplikasi menyala dalam keadaan terkunci.
-  if (terkunci) return <LayarKunci />;
+  // Bila jendela sudah berukuran widget (mulai otomatis saat PIN terpasang), kunci ditampilkan
+  // di dalam bingkai widget supaya tetap bisa digeser dan tidak menutupi layar.
+  if (terkunci) {
+    return modeWidget && platform === "desktop" ? <KerangkaWidget terkunci /> : <LayarKunci />;
+  }
   if (sedangMuatKunci || sedangMuat) return <LayarMuat />;
 
   if (pengaturan && !pengaturan.onboardingSelesai && !modeWidget) {

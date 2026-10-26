@@ -6,13 +6,18 @@ import { Kartu } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label, Petunjuk } from "@/components/ui/label";
 import { useKunci } from "@/app/store/kunci-store";
+import { cn } from "@/lib/utils";
 import { useTerjemah } from "@/lib/i18n";
 import { pesanGalat } from "@/lib/ipc";
 import logoMerek from "@/assets/brand/logo-64.png";
 
 /** F4 layar kunci. Menggantikan seluruh shell, jadi tidak ada command data yang sempat dipanggil
-   sebelum PIN diterima. Pinfield memakai type=password supaya isinya tidak terlihat di bahu. */
-export function LayarKunci() {
+   sebelum PIN diterima. Pinfield memakai type=password supaya isinya tidak terlihat di bahu.
+
+   `rapat` dipakai saat aplikasi terkunci dalam Mode Widget: kartu harus muat di jendela 288x360,
+   jadi teks pendukung dan bayangan kartu dilepas dan yang tersisa hanya kolom PIN, pesan galat,
+   dan tombol buka. */
+export function LayarKunci({ rapat = false }: { rapat?: boolean }) {
   const { t } = useTerjemah();
   const buka = useKunci((s) => s.buka);
   const bukaBiometrik = useKunci((s) => s.bukaBiometrik);
@@ -62,22 +67,37 @@ export function LayarKunci() {
   };
 
   return (
-    <div className="flex min-h-dvh w-screen flex-col items-center overflow-y-auto overscroll-contain bg-neutral p-md">
+    <div
+      className={cn(
+        "flex flex-col overflow-y-auto overscroll-contain bg-neutral",
+        rapat
+          ? "min-h-0 w-full flex-1 items-stretch p-sm"
+          : "min-h-dvh w-screen items-center p-md",
+      )}
+    >
       {/* Lebar ditulis sebagai nilai bebas: pada Tailwind v4 di proyek ini `max-w-sm` mengambil
           token jarak `--spacing-sm` (12px), jadi kartu menyusut dan teksnya meluber keluar bingkai. */}
-      <Kartu as="section" className="my-auto grid w-full max-w-[384px] gap-md shadow-elev-3">
+      <Kartu
+        as="section"
+        className={cn(
+          "my-auto grid w-full gap-xs",
+          !rapat && "max-w-[384px] gap-md shadow-elev-3",
+        )}
+      >
         <div className="flex items-center gap-xs">
-          <img
-            src={logoMerek}
-            alt=""
-            width={36}
-            height={36}
-            className="size-9 shrink-0 rounded-sm border-2 border-primary"
-          />
+          {!rapat && (
+            <img
+              src={logoMerek}
+              alt=""
+              width={36}
+              height={36}
+              className="size-9 shrink-0 rounded-sm border-2 border-primary"
+            />
+          )}
           <h1 className="font-display text-headline-sm">{t("kunci.layarJudul")}</h1>
         </div>
 
-        <p className="text-body-md text-on-surface">{t("kunci.layarPetunjuk")}</p>
+        {!rapat && <p className="text-body-md text-on-surface">{t("kunci.layarPetunjuk")}</p>}
 
         <form className="grid gap-xs" onSubmit={(event) => void kirim(event)}>
           <Label htmlFor="pin-masuk">{t("kunci.labelKodePin")}</Label>
@@ -131,7 +151,7 @@ export function LayarKunci() {
           )}
         </form>
 
-        <p className="text-body-sm text-secondary">{t("kunci.layarKaki")}</p>
+        {!rapat && <p className="text-body-sm text-secondary">{t("kunci.layarKaki")}</p>}
       </Kartu>
     </div>
   );

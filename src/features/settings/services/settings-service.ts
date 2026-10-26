@@ -29,6 +29,8 @@ export type Pengaturan = {
   pintasanGlobal: string;
   /** Cadangan otomatis mingguan di folder data aplikasi (PRD D3). */
   cadanganOtomatis: boolean;
+  /** Cermin dari entri start sistem; keadaan sebenarnya dibaca lewat plugin autostart. */
+  mulaiOtomatis: boolean;
 };
 
 /** Bagianbatasan yang sama dengan TRANSPARANSI_MIN di backend. */

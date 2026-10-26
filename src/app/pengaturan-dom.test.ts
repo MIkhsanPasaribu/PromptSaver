@@ -19,6 +19,7 @@ function pengaturan(bagian: Partial<Pengaturan>): Pengaturan {
     pintasanGlobalAktif: false,
     pintasanGlobal: "Alt+Enter",
     cadanganOtomatis: true,
+    mulaiOtomatis: false,
     ...bagian,
   };
 }

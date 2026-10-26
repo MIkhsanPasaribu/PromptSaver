@@ -45,6 +45,14 @@ export default {
   petunjukPintasanGlobal:
     "Off by default. The app does not register any system shortcut until you turn it on, and it backs off when another app already owns the combination.",
 
+  sistem: "System",
+  mulaiOtomatis: "Start automatically at sign-in",
+  petunjukMulaiOtomatis:
+    "Adds or removes one start entry for this user. The same switch is available in Windows Settings > Apps > Startup, and that one is the real state.",
+  petunjukMulaiOtomatisStart:
+    "When Windows starts the app it opens straight away as the small Widget Mode window so it does not cover your screen. With a PIN set, the lock screen appears inside that same small frame.",
+  gagalMulaiOtomatis: "The system start entry could not be changed: {{pesan}}",
+
   cadanganOtomatis: "Automatic backup",
   cadangkanSekarang: "Back up now",
   labelCadanganMingguan: "Back up every week",

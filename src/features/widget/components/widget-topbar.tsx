@@ -19,6 +19,9 @@ export type PropertiBilahAtas = {
   onPerluas?: () => void | Promise<void>;
   /** Menggantikan perilaku tutup, misalnya ke tray atau keluar penuh (PRD G3). */
   onTutup?: () => void | Promise<void>;
+  /** Saat aplikasi terkunci PIN, hanya tombol sembunyi yang tersisa: sematkan dan perluas sama-sama
+     membaca atau menulis pengaturan, dan gerbang backend menolaknya sampai PIN masuk. */
+  terkunci?: boolean;
 };
 
 type PropertiTombolBilah = Pick<PropertiTombol, "aria-label" | "onClick" | "children"> & {
@@ -49,7 +52,7 @@ function TombolBilah({ "aria-label": label, onClick, children, keadaan }: Proper
  * setiap saat (sematkan, perluas, tutup). Transparansi diatur di Pengaturan supaya bilah
  * tetap muat pada widget 288px (PRD G1 dan G2).
  */
-export function BilahAtasWidget({ onPerluas, onTutup }: PropertiBilahAtas = {}) {
+export function BilahAtasWidget({ onPerluas, onTutup, terkunci = false }: PropertiBilahAtas = {}) {
   const { t } = useTerjemah();
   const sematkan = Boolean(usePengaturan((s) => s.pengaturan?.widgetSelaluDiAtas));
   const ubahPengaturan = usePengaturan((s) => s.ubah);
@@ -94,17 +97,21 @@ export function BilahAtasWidget({ onPerluas, onTutup }: PropertiBilahAtas = {}) 
       </span>
 
       <div className="flex shrink-0 items-center gap-xxs">
-        <TombolBilah
-          aria-label={t("widget.sematkanDiAtas")}
-          keadaan={sematkan}
-          onClick={() => void ubahPengaturan({ widgetSelaluDiAtas: !sematkan })}
-        >
-          {sematkan ? <PinIcon aria-hidden /> : <PinOffIcon aria-hidden />}
-        </TombolBilah>
+        {!terkunci && (
+          <>
+            <TombolBilah
+              aria-label={t("widget.sematkanDiAtas")}
+              keadaan={sematkan}
+              onClick={() => void ubahPengaturan({ widgetSelaluDiAtas: !sematkan })}
+            >
+              {sematkan ? <PinIcon aria-hidden /> : <PinOffIcon aria-hidden />}
+            </TombolBilah>
 
-        <TombolBilah aria-label={t("widget.perluas")} onClick={() => void perluas()}>
-          <Maximize2Icon aria-hidden />
-        </TombolBilah>
+            <TombolBilah aria-label={t("widget.perluas")} onClick={() => void perluas()}>
+              <Maximize2Icon aria-hidden />
+            </TombolBilah>
+          </>
+        )}
 
         <TombolBilah aria-label={t("widget.tutupWidget")} onClick={() => void tutup()}>
           <XIcon aria-hidden />

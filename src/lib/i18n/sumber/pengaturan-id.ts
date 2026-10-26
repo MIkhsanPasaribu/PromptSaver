@@ -46,6 +46,14 @@ export default {
   petunjukPintasanGlobal:
     "Mati secara bawaan. Aplikasi tidak mendaftarkan pintasan sistem sebelum Anda menyalakannya, dan akan membatalkan bila bentrok dengan aplikasi lain.",
 
+  sistem: "Sistem",
+  mulaiOtomatis: "Jalankan otomatis saat masuk",
+  petunjukMulaiOtomatis:
+    "Menambah atau menghapus satu entri start atas nama pengguna ini. Saklar yang sama tersedia di Settings > Apps > Startup Windows, dan keadaan di sanalah yang dipakai.",
+  petunjukMulaiOtomatisStart:
+    "Saat dijalankan oleh Windows, aplikasi langsung tampil sebagai Mode Widget kecil supaya tidak menutupi layar. Bila PIN terpasang, layar kunci ikut muncul di dalam bingkai kecil itu.",
+  gagalMulaiOtomatis: "Entri start sistem tidak dapat diubah: {{pesan}}",
+
   cadanganOtomatis: "Cadangan otomatis",
   cadangkanSekarang: "Cadangkan sekarang",
   labelCadanganMingguan: "Cadangkan tiap minggu",

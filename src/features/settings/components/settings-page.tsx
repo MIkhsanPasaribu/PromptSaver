@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import {
   MonitorIcon,
+  PowerIcon,
   RefreshCwIcon,
   SaveIcon,
   Trash2Icon,
@@ -46,6 +47,7 @@ import {
   type Tema,
 } from "@/features/settings/services/settings-service";
 import { gunakanModeJendela } from "@/features/widget";
+import { gunakanUbahMulaiOtomatis, gunakanSinkronMulaiOtomatis } from "@/features/settings/hooks/use-mulai-otomatis";
 import { terapkanPintasanGlobal } from "@/features/widget/services/widget-service";
 import { deteksiPlatform } from "@/lib/platform";
 import { useNavigasi } from "@/app/store/navigasi-store";
@@ -106,6 +108,10 @@ export function HalamanPengaturan() {
   const { pengaturan, ubah, aturUlang, kosongkanData } = usePengaturan();
   const desktop = deteksiPlatform() === "desktop";
   const { modeWidget, masukWidget, perluas } = gunakanModeJendela();
+  const ubahMulaiOtomatis = gunakanUbahMulaiOtomatis();
+  // Layar ini dibuka ulang dari awal setiap kali, jadi ceknya jalan lagi: pengguna bisa
+  // mengubah saklar yang sama di Settings > Apps > Startup saat aplikasi sedang berjalan.
+  gunakanSinkronMulaiOtomatis(true);
   const [statistik, setStatistik] = useState<Statistik | null>(null);
   const [konfirmasi, setKonfirmasi] = useState<0 | 1 | 2>(0);
   const [kataKonfirmasi, setKataKonfirmasi] = useState("");
@@ -363,6 +369,29 @@ export function HalamanPengaturan() {
             </div>
             <Petunjuk>{t("pengaturan.petunjukPintasanGlobal")}</Petunjuk>
           </div>
+        </Kartu>
+      )}
+
+      {desktop && (
+        <Kartu as="section" className="grid gap-md">
+          <h2 className="flex items-center gap-xs font-display text-headline-sm">
+            <PowerIcon aria-hidden />
+            {t("pengaturan.sistem")}
+          </h2>
+
+          <div className="flex flex-wrap items-center justify-between gap-sm">
+            <div>
+              <Label>{t("pengaturan.mulaiOtomatis")}</Label>
+              <Petunjuk>{t("pengaturan.petunjukMulaiOtomatis")}</Petunjuk>
+            </div>
+            <Saklar
+              aktif={pengaturan.mulaiOtomatis}
+              label={t("pengaturan.mulaiOtomatis")}
+              onUbah={(nilai) => void ubahMulaiOtomatis(nilai)}
+            />
+          </div>
+
+          <Petunjuk>{t("pengaturan.petunjukMulaiOtomatisStart")}</Petunjuk>
         </Kartu>
       )}
 
